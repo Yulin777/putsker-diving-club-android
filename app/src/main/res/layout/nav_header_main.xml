@@ -30,5 +30,6 @@
         android:layout_height="88dp"
         android:layout_marginLeft="5dp"
         android:onClick="changeProfileImage"
-        android:layout_gravity="center |left" />
+        android:layout_gravity="center |left"
+        android:src="@drawable/diver"/>
 </FrameLayout>

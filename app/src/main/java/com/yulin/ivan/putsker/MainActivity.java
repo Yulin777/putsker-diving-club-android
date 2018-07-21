@@ -1,9 +1,11 @@
 package com.yulin.ivan.putsker;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,12 +36,22 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ActivityCompat.OnRequestPermissionsResultCallback {
+
+    private static final int GET_ACCOUNTS_REQUEST_CODE = 1;
+    private static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = 2;
+    private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 3;
+    private static final int CAMERA_REQUEST_CODE = 4;
     private static final int PICK_IMAGE = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 2;
     private StorageReference mStorageRef;
+    ProgressDialog pg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,93 +179,134 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 getImageFromGallery();
-//                builderSingle.setView(image);
 
             }
         });
-        builderSingle.setPositiveButton("Camera", null);
-//        builderSingle.setNegativeButton("Cancel",null);
+        builderSingle.setPositiveButton("Camera", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                getImageFromCamera();
 
-//        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_selectable_list_item);
-//        arrayAdapter.add("Camera");
-//        arrayAdapter.add("Gallery");
+            }
+        });
 
-//        builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.dismiss();
-//            }
-//        });
-
-//        builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                String strName = arrayAdapter.getItem(which);
-//                switch (strName){
-//                    case "Camera":
-//                        break;
-//                    case "Gallery":
-//
-//                }
-//                AlertDialog.Builder builderInner = new AlertDialog.Builder(MainActivity.this);
-//                builderInner.setMessage(strName);
-//                builderInner.setTitle("Your Selected Item is");
-//                builderInner.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog,int which) {
-//                        dialog.dismiss();
-//                    }
-//                });
-//                builderInner.show();
-//            }
-//        });
         builderSingle.show();
+    }
+
+    private void getImageFromCamera() {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
+
+            new AlertDialog.Builder(MainActivity.this).
+                    setTitle("Please try again after granting permission")
+                    .setNeutralButton("Got it!", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //do nothing
+                        }
+                    }).show();
+        }
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE);
+            }
+        }
     }
 
     private void getImageFromGallery() {
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            System.out.println("what the shit");
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 2);
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE_REQUEST_CODE);
+
+            new AlertDialog.Builder(MainActivity.this).
+                    setTitle("Please try again after granting permission")
+                    .setNeutralButton("Got it!", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //do nothing
+                        }
+                    }).show();
         }
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        startActivityForResult(intent, PICK_IMAGE);
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            Intent selectFromGalleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            selectFromGalleryIntent.setType("image/*");
+            startActivityForResult(selectFromGalleryIntent, READ_EXTERNAL_STORAGE_REQUEST_CODE);
+        }
     }
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK && data != null) {
+        Uri imageUri;
+        Bitmap bitmap = null;
+        try {
+            if (resultCode == RESULT_OK) {
+                imageUri = data.getData();
+                pg = new ProgressDialog(this);
+                pg.setMessage("uploading image...");
+                pg.show();
+                if (requestCode == READ_EXTERNAL_STORAGE_REQUEST_CODE) {
+                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                    mStorageRef.child("images").child(imageUri.getLastPathSegment()).putFile(imageUri)
+                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    Toast.makeText(getApplicationContext(), "Image uploaded", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    Toast.makeText(getApplicationContext(), "Upload failed", Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
-            //TODO: put chosen image to firebase
-            Uri imageUri = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                ((ImageView)findViewById(R.id.profile_image)).setImageBitmap(bitmap);
-            } catch (Exception e) {
-                e.printStackTrace();
+                }
+                if (requestCode == CAMERA_REQUEST_CODE) {
+
+                    bitmap = (Bitmap) data.getExtras().get("data");
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    byte[] dataBAOS = baos.toByteArray();
+
+                    mStorageRef.child("images").child("filename" + new Date().getTime())
+                            .putBytes(dataBAOS)
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    Toast.makeText(getApplicationContext(), "Upload failed", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    Toast.makeText(getApplicationContext(), "Image uploaded", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+
+                ((ImageView) findViewById(R.id.profile_image)).setImageBitmap(bitmap);
+            } else {
+                //do nothing
+                Toast.makeText(getApplicationContext(), "Image uploaded", Toast.LENGTH_SHORT).show();
+
             }
-            Uri file = Uri.fromFile(new File(data.getData().getEncodedPath()));
+        } catch (Exception e) {
+            e.printStackTrace();
 
-            mStorageRef.child("images/").putFile(file)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            // Get a URL to the uploaded content
-                            Uri downloadUrl = taskSnapshot.getUploadSessionUri();
-                            System.out.println("suc");
-
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            // Handle unsuccessful uploads
-                            // ...
-                            System.out.println("fail");
-                        }
-                    });
         }
+        if (pg != null) pg.dismiss();
+
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        System.out.println("todo");
+        //todo - permissions is an async function. app crashes when asking for permission in the first time
+    }
+
 }
