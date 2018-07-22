@@ -48,8 +48,7 @@ public class MainActivity extends AppCompatActivity
     private static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = 2;
     private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 3;
     private static final int CAMERA_REQUEST_CODE = 4;
-    private static final int PICK_IMAGE = 1;
-    private static final int REQUEST_IMAGE_CAPTURE = 2;
+    private static final int PROFILE_REQUEST_CODE = 5;
     private StorageReference mStorageRef;
     ProgressDialog pg;
 
@@ -125,8 +124,8 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_manage) {
-
+        } else if (id == R.id.nav_profile) {
+            profileSettings();
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
@@ -138,6 +137,10 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void profileSettings() {
+        startActivityForResult(new Intent(this, ProfileActivity.class), PROFILE_REQUEST_CODE);
     }
 
     public void signOut() {
@@ -166,6 +169,7 @@ public class MainActivity extends AppCompatActivity
                     Toast.LENGTH_SHORT).show();
         }
     }
+
 
     public void changeProfileImage(View v) {
         //todo change to users image
@@ -216,7 +220,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void getImageFromGallery() {
+    public void getImageFromGallery() {
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE_REQUEST_CODE);
