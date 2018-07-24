@@ -19,7 +19,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public void changeProfileImage(View v) {
-        ma.changeProfileImage(v,this);
+        //ma.changeProfileImage(v,this);
     }
 
     public void changePassword(View v) {
