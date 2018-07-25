@@ -38,7 +38,8 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".PasswordReset" />
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".ChangePasswordActivity"></activity>
+        <activity android:name=".ChangePasswordActivity" />
+        <activity android:name=".EmailChangeActivity"></activity>
     </application>
 
 </manifest>

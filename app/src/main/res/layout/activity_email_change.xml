@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ChangePasswordActivity">
+    tools:context=".EmailChangeActivity">
 
     <EditText
-        android:id="@+id/newPass1"
+        android:id="@+id/old_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -16,15 +16,14 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="116dp"
         android:ems="10"
-        android:hint="Old Password"
-        android:inputType="textPassword"
+        android:hint="Old Email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/newPass2"
+        android:id="@+id/pass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -33,12 +32,28 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:ems="10"
-        android:hint="New Password"
+        android:hint="Old Password"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newPass1" />
+        app:layout_constraintTop_toBottomOf="@id/old_email" />
+
+    <EditText
+        android:id="@+id/new_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:ems="10"
+        android:hint="New Email"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pass" />
 
 
     <Button
@@ -51,13 +66,13 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:onClick="changePassword"
-        android:text="Change Password"
+        android:onClick="changeEmail"
+        android:text="Change Email"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newPass2"
+        app:layout_constraintTop_toBottomOf="@+id/new_email"
         app:layout_constraintVertical_bias="0.134" />
 
 </android.support.constraint.ConstraintLayout>
