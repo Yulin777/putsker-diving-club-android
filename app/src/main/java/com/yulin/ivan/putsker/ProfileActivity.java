@@ -54,6 +54,7 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageView profilePicture;
     ImageView profileImage;
     NavigationView mNavigationView;
+    TextView profileName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +68,15 @@ public class ProfileActivity extends AppCompatActivity {
         userEmail = findViewById(R.id.profile_email);
         userEmail.setText(mUser.getEmail());
 
+        initProfileName();
         initProfileImage();
+    }
+
+    private void initProfileName() {
+        profileName = findViewById(R.id.profile_name);
+        String userDisplayName = mUser.getDisplayName();
+        String preEmail = mUser.getEmail().split("@")[0];
+        profileName.setText(userDisplayName != "" ? userDisplayName : preEmail);
     }
 
     private void initProfileImage() {
@@ -75,10 +84,6 @@ public class ProfileActivity extends AppCompatActivity {
         mUser = mAuth.getCurrentUser();
         profilePicture = findViewById(R.id.profile_image);
 
-
-//        mNavigationView = findViewById(R.id.nav_view);
-//        View header = mNavigationView.getHeaderView(0);
-//        profileImage = header.findViewById(R.id.profile_image);
         if (mUser.getPhotoUrl() != null) {
             //set profile image from firebase if the user has one
             setProfileImageFromFirebase();
