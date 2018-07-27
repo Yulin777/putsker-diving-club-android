@@ -12,10 +12,10 @@
         android:src="@drawable/logo" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profile_image"
+        android:id="@+id/nav_header_profile_image"
         android:layout_width="88dp"
         android:layout_height="88dp"
         android:layout_marginLeft="5dp"
-        android:onClick="showProfilePicture"
+        android:src="@drawable/diver2"
         android:layout_gravity="center |left"/>
 </FrameLayout>

@@ -1,14 +1,17 @@
 package com.yulin.ivan.putsker;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -49,6 +52,8 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private ImageView profilePicture;
+    ImageView profileImage;
+    NavigationView mNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +67,42 @@ public class ProfileActivity extends AppCompatActivity {
         userEmail = findViewById(R.id.profile_email);
         userEmail.setText(mUser.getEmail());
 
+        initProfileImage();
+    }
+
+    private void initProfileImage() {
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
         profilePicture = findViewById(R.id.profile_image);
+
+
+//        mNavigationView = findViewById(R.id.nav_view);
+//        View header = mNavigationView.getHeaderView(0);
+//        profileImage = header.findViewById(R.id.profile_image);
+        if (mUser.getPhotoUrl() != null) {
+            //set profile image from firebase if the user has one
+            setProfileImageFromFirebase();
+        }
+    }
+
+    public void setProfileImageFromFirebase() {
+        Intent intent;
+        if (Build.VERSION.SDK_INT < 19) {
+            intent = new Intent();
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+        } else {
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT); //workaround to fix specific permission
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mUser.getPhotoUrl());
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+                profilePicture.setImageBitmap(bitmap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -73,31 +113,33 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void changeProfileImage(View v) {
         //todo change to users image
-        ImageView image = new ImageView(this);
-        image.setImageResource(R.drawable.popo);
+//        ImageView image = new ImageView(this);
+//        image.setImageResource(R.drawable.popo);
+//
+//        final AlertDialog.Builder builderSingle = new AlertDialog.Builder(ProfileActivity.this);
+//        builderSingle.setTitle("Change Profile Photo");
+//        builderSingle.setNeutralButton("Gallery", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                getImageFromGallery();
+//            }
+//        });
+//        builderSingle.setPositiveButton("Camera", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                getImageFromCamera();
+//            }
+//        });
+//
+//        builderSingle.show();
 
-        final AlertDialog.Builder builderSingle = new AlertDialog.Builder(ProfileActivity.this);
-        builderSingle.setTitle("Change Profile Photo");
-        builderSingle.setView(image);
-        builderSingle.setNeutralButton("Gallery", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                getImageFromGallery();
-
-            }
-        });
-        builderSingle.setPositiveButton("Camera", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                getImageFromCamera();
-
-            }
-        });
-
-        builderSingle.show();
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.change_image_dialog);
+        dialog.setTitle("Change Profile Photo");
+        dialog.show();
     }
 
-    private void getImageFromCamera() {
+    public void getImageFromCamera(View v) {
         if (ContextCompat.checkSelfPermission(ProfileActivity.this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(ProfileActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
@@ -120,7 +162,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    public void getImageFromGallery() {
+    public void getImageFromGallery(View v) {
         if (ContextCompat.checkSelfPermission(ProfileActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(ProfileActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE_REQUEST_CODE);

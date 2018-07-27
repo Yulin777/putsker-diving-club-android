@@ -73,10 +73,6 @@
                 android:text="@string/action_sign_in_short"
                 android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="aaa@aaa.aaa , aaaaaa" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -84,7 +80,9 @@
                 android:text="Forgot Password?"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
-                android:onClick="forgotPassword"/>
+                android:onClick="forgotPassword"
+                android:paddingTop="20dp"
+                android:textColor="@color/teal"/>
 
         </LinearLayout>
     </ScrollView>

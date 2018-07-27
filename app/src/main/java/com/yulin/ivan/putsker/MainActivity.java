@@ -1,16 +1,22 @@
 package com.yulin.ivan.putsker;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -26,8 +32,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -54,20 +64,55 @@ public class MainActivity extends AppCompatActivity
     private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 3;
     private static final int CAMERA_REQUEST_CODE = 4;
     private static final int PROFILE_REQUEST_CODE = 5;
-
+    private static final int KITKAT_VALUE = 1002;
+    Toolbar toolbar;
     FirebaseAuth mAuth;
     FirebaseUser mUser;
     ImageView profileImage;
+    NavigationView mNavigationView;
     ProgressDialog pg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        initialize();
+    }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+    private void initialize() {
+        toolbar = findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
+        initFab();
+        initDrawer();
+        initProfileImage();
+    }
+
+    private void initProfileImage() {
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+
+        mNavigationView = findViewById(R.id.nav_view);
+        View header = mNavigationView.getHeaderView(0);
+        profileImage = header.findViewById(R.id.nav_header_profile_image);
+        if (mUser.getPhotoUrl() != null) {
+            //set profile image from firebase if the user has one
+            setProfileImageFromFirebase();
+        }
+    }
+
+    private void initDrawer() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    private void initFab() {
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.hide(); //todo add functionality to button (add new student to waiting list)
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,22 +121,6 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
-        profileImage = findViewById(R.id.profile_image);
-//        int id = getResources().getIdentifier("com.yulin.ivan.putsker:drawable/" + "diver", null, null);
-//        profileImage.setImageResource(id);
-        profileImage.setImageDrawable(getResources().getDrawable(R.drawable.diver));
     }
 
     @Override
@@ -130,6 +159,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
@@ -185,51 +215,21 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Uri imageUri;
+    public void setProfileImageFromFirebase() {
+        Intent intent;
+        if (Build.VERSION.SDK_INT < 19) {
+            intent = new Intent();
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+        } else {
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT); //workaround to fix specific permission
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mUser.getPhotoUrl());
 
-        Bitmap bitmap = null;
-        if (resultCode == RESULT_OK) {
-            imageUri = data.getData();
-
-            if (requestCode == READ_EXTERNAL_STORAGE_REQUEST_CODE) {
-//                try {
-
-                //place image to firebase
-                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                        .setPhotoUri(imageUri)
-                        .build();
-
-                mUser.updateProfile(profileUpdates)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-
-                                    //get image from firebase
-                                    Bitmap bitmap = null;
-                                    try {
-                                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mUser.getPhotoUrl());
-
-                                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                                        ((ImageView) findViewById(R.id.profile_image)).setImageBitmap(bitmap);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                }
-                            }
-                        });
-
-//                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-//                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//                    ((ImageView) findViewById(R.id.profile_image)).setImageBitmap(bitmap);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                profileImage.setImageBitmap(bitmap);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -243,30 +243,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public void showProfilePicture(View view) {
-        ImageView image = new ImageView(this);
-        image.setImageResource(R.drawable.popo);
 
 
-        Intent selectFromGalleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        selectFromGalleryIntent.setType("image/*");
-        startActivityForResult(selectFromGalleryIntent, READ_EXTERNAL_STORAGE_REQUEST_CODE);
-//
-//        try {
-//            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mUser.getPhotoUrl());
-//
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//            ((ImageView) findViewById(R.id.profile_image)).setImageBitmap(bitmap);
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-//        image.setImageResource();
-//
-//        new AlertDialog.Builder(this)
-//                .setView(image)
-//                .show();
-    }
 }
