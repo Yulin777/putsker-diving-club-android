@@ -42,11 +42,13 @@ public class ProfileActivity extends AppCompatActivity {
     private static final int PROFILE_REQUEST_CODE = 5;
     private static final int CHANGE_PASSWORD_REQUEST_CODE = 6;
     private static final int CHANGE_EMAIL_REQUEST_CODE = 7;
+    private static final int CHANGE_NAME_REQUEST_CODE = 8;
     private StorageReference mStorageRef;
     ProgressDialog pg;
     TextView userEmail;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
+    private ImageView profilePicture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,8 @@ public class ProfileActivity extends AppCompatActivity {
         mUser = mAuth.getCurrentUser();
         userEmail = findViewById(R.id.profile_email);
         userEmail.setText(mUser.getEmail());
+
+        profilePicture = findViewById(R.id.profile_image);
     }
 
 
@@ -215,4 +219,10 @@ public class ProfileActivity extends AppCompatActivity {
         startActivityForResult(new Intent(ProfileActivity.this, EmailChangeActivity.class), CHANGE_EMAIL_REQUEST_CODE);
 
     }
+
+    public void changeName(View view) {
+        startActivityForResult(new Intent(ProfileActivity.this, NameChangeActivity.class), CHANGE_NAME_REQUEST_CODE);
+
+    }
+
 }

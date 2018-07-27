@@ -39,7 +39,8 @@
         <activity android:name=".PasswordReset" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".ChangePasswordActivity" />
-        <activity android:name=".EmailChangeActivity"></activity>
+        <activity android:name=".EmailChangeActivity" />
+        <activity android:name=".NameChangeActivity"></activity>
     </application>
 
 </manifest>

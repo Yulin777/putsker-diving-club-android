@@ -47,6 +47,7 @@
             android:drawablePadding="6dp"
             android:drawableStart="@drawable/ic_perm_identity_black_24dp"
             android:drawableTint="#666"
+            android:onClick="changeName"
             android:text="Change Name"
             android:textSize="21dp" />
 
