@@ -1,5 +1,6 @@
 package com.yulin.ivan.putsker;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class NameChangeActivity extends AppCompatActivity {
 
+    private static final int CHANGE_NAME_REQUEST_CODE = 8;
     TextView newName;
     FirebaseAuth mAuth;
     FirebaseUser mUser;
@@ -33,7 +35,7 @@ public class NameChangeActivity extends AppCompatActivity {
     }
 
     public void changeName(View view) {
-        String _newName = newName.getText().toString();
+        final String _newName = newName.getText().toString();
 
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(_newName)
@@ -43,11 +45,17 @@ public class NameChangeActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        Intent intent = new Intent();
                         if (task.isSuccessful()) {
+                            intent.putExtra("newName", _newName);
                             Toast.makeText(NameChangeActivity.this, "Name updated", Toast.LENGTH_SHORT).show();
+
                         } else {
                             Toast.makeText(NameChangeActivity.this, "Name could not update", Toast.LENGTH_SHORT).show();
+                            intent.putExtra("newName", "");
                         }
+                        setResult(RESULT_OK, intent);
+                        finish();
                     }
                 });
     }

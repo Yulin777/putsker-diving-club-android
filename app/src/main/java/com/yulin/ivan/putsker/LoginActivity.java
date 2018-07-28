@@ -33,13 +33,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -76,6 +85,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mLoginFormView;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
+    private StorageReference mStorageRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,9 +93,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         //checkPermissions();
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null)
-            loadMainView(currentUser);
+        mUser = mAuth.getCurrentUser();
+        if (mUser != null)
+            loadMainView(mUser);
+        mStorageRef = FirebaseStorage.getInstance().getReference();
 
         setContentView(R.layout.activity_login);
         // Set up the login form.
@@ -278,13 +289,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //                            updateUI(null);
                         }
 
-                        // ...
                     }
                 });
     }
 
-    private void loadMainView(FirebaseUser user) {
 
+
+    private void loadMainView(FirebaseUser user) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("userName", user.getDisplayName());
         intent.putExtra("userEmail", user.getEmail());

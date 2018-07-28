@@ -34,6 +34,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Date;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -192,20 +193,31 @@ public class ProfileActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Uri imageUri;
         Bitmap bitmap = null;
 
-        if (requestCode == CHANGE_EMAIL_REQUEST_CODE) {
-            String newEmail = data.getStringExtra("newEmail");
-            userEmail.setText(newEmail);
-        } else try {
-            if (resultCode == RESULT_OK) {
-                imageUri = data.getData();
+        if (resultCode == RESULT_OK) {
+            if (requestCode == CHANGE_EMAIL_REQUEST_CODE) {
+                String newEmail = data.getStringExtra("newEmail");
+                userEmail.setText(newEmail);
+
+            } else if (requestCode == CHANGE_NAME_REQUEST_CODE) {
+                String newName = data.getStringExtra("newName");
+                if (!newName.equals("")) {
+                    profileName.setText(newName);
+                }
+
+            } else if (requestCode == READ_EXTERNAL_STORAGE_REQUEST_CODE || requestCode == CAMERA_REQUEST_CODE) {
+                Uri imageUri = data.getData();
                 pg = new ProgressDialog(this);
                 pg.setMessage("uploading image...");
                 pg.show();
+
                 if (requestCode == READ_EXTERNAL_STORAGE_REQUEST_CODE) {
-                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     mStorageRef.child("images").child(imageUri.getLastPathSegment()).putFile(imageUri)
                             .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
@@ -243,19 +255,13 @@ public class ProfileActivity extends AppCompatActivity {
                                 }
                             });
                 }
-
-                if (requestCode == READ_EXTERNAL_STORAGE_REQUEST_CODE || requestCode == CAMERA_REQUEST_CODE) {
-                    ((ImageView) findViewById(R.id.profile_image)).setImageBitmap(bitmap);
-                }
-
-
-            } else {
-                //do nothing
-                Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
-
+                ((ImageView) findViewById(R.id.profile_image)).setImageBitmap(bitmap);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+
+        } else /* if response not ok */ {
+            //do nothing
+            //Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
 
         }
         if (pg != null) pg.dismiss();

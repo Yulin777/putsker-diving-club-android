@@ -47,6 +47,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -55,6 +57,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -98,6 +102,8 @@ public class MainActivity extends AppCompatActivity
             //set profile image from firebase if the user has one
             setProfileImageFromFirebase();
         }
+        //uploadDataToFirebase();
+
     }
 
     private void initDrawer() {
@@ -121,6 +127,30 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
+    }
+
+    private void uploadDataToFirebase() {
+        String userID = mUser.getUid();
+        Map newPost = new HashMap();
+        DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child(userID);
+
+        if (userID.equals("pgxULqnRotc8pFO1pQhznp40ZjE3")) //aaa user
+            newPost.put("seniority", "yes");
+
+        Task<Void> temp = current_user_db.setValue(newPost);
+        temp.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(getApplicationContext(), "Upload failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+        temp.addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getApplicationContext(), "Upload successfully", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @Override
@@ -241,8 +271,6 @@ public class MainActivity extends AppCompatActivity
 
 
     }
-
-
 
 
 }
