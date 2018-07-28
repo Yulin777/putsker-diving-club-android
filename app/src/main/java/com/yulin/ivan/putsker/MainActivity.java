@@ -1,28 +1,17 @@
 package com.yulin.ivan.putsker;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -32,15 +21,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -49,14 +32,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,6 +66,20 @@ public class MainActivity extends AppCompatActivity
         initFab();
         initDrawer();
         initProfileImage();
+        initUsername();
+    }
+
+    private void initUsername() {
+        String username = mUser.getDisplayName();
+        String preEmail = mUser.getEmail().split("@")[0];
+
+        if (username == null || username.equals("")) {
+            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setDisplayName(preEmail)
+                    .build();
+
+            mUser.updateProfile(profileUpdates);
+        }
     }
 
     private void initProfileImage() {
@@ -99,8 +90,7 @@ public class MainActivity extends AppCompatActivity
         View header = mNavigationView.getHeaderView(0);
         profileImage = header.findViewById(R.id.nav_header_profile_image);
         if (mUser.getPhotoUrl() != null) {
-            //set profile image from firebase if the user has one
-            setProfileImageFromFirebase();
+            setProfileImageFromFirebase(); //set profile image from firebase if the user has one
         }
         //uploadDataToFirebase();
 
@@ -134,20 +124,21 @@ public class MainActivity extends AppCompatActivity
         Map newPost = new HashMap();
         DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child(userID);
 
-        if (userID.equals("pgxULqnRotc8pFO1pQhznp40ZjE3")) //aaa user
+        if (userID.equals("pgxULqnRotc8pFO1pQhznp40ZjE3")) //aaa user id
             newPost.put("seniority", "yes");
+        else newPost.put("seniority", "no");
 
         Task<Void> temp = current_user_db.setValue(newPost);
         temp.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(getApplicationContext(), "Upload failed", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Upload failed", Toast.LENGTH_SHORT).show();
             }
         });
         temp.addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Toast.makeText(getApplicationContext(), "Upload successfully", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Uploaded successfully", Toast.LENGTH_SHORT).show();
             }
         });
 

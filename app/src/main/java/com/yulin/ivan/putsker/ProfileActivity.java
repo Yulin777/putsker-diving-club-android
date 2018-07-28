@@ -77,7 +77,8 @@ public class ProfileActivity extends AppCompatActivity {
         profileName = findViewById(R.id.profile_name);
         String userDisplayName = mUser.getDisplayName();
         String preEmail = mUser.getEmail().split("@")[0];
-        profileName.setText(userDisplayName != "" ? userDisplayName : preEmail);
+//        profileName.setText(userDisplayName != "" ? userDisplayName : preEmail);
+        profileName.setText(userDisplayName);
     }
 
     private void initProfileImage() {
