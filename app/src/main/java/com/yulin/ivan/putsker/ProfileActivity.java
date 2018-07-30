@@ -23,18 +23,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Date;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -53,9 +60,8 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private ImageView profilePicture;
-    ImageView profileImage;
-    NavigationView mNavigationView;
     TextView profileName;
+    Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +82,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void initProfileName() {
         profileName = findViewById(R.id.profile_name);
         String userDisplayName = mUser.getDisplayName();
-        String preEmail = mUser.getEmail().split("@")[0];
+//        String preEmail = mUser.getEmail().split("@")[0];
 //        profileName.setText(userDisplayName != "" ? userDisplayName : preEmail);
         profileName.setText(userDisplayName);
     }
@@ -93,23 +99,20 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public void setProfileImageFromFirebase() {
-        Intent intent;
-        if (Build.VERSION.SDK_INT < 19) {
-            intent = new Intent();
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-        } else {
-            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT); //workaround to fix specific permission
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mUser.getPhotoUrl());
 
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-
-                profilePicture.setImageBitmap(bitmap);
-            } catch (Exception e) {
-                e.printStackTrace();
+        mStorageRef.child("users").child(mUser.getUid()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Glide.with(ProfileActivity.this)
+                        .load(uri)
+                        .into(profilePicture);
             }
-        }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(ProfileActivity.this, "could not load profile image from firebase.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
@@ -119,28 +122,7 @@ public class ProfileActivity extends AppCompatActivity {
 
 
     public void changeProfileImage(View v) {
-        //todo change to users image
-//        ImageView image = new ImageView(this);
-//        image.setImageResource(R.drawable.popo);
-//
-//        final AlertDialog.Builder builderSingle = new AlertDialog.Builder(ProfileActivity.this);
-//        builderSingle.setTitle("Change Profile Photo");
-//        builderSingle.setNeutralButton("Gallery", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                getImageFromGallery();
-//            }
-//        });
-//        builderSingle.setPositiveButton("Camera", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                getImageFromCamera();
-//            }
-//        });
-//
-//        builderSingle.show();
-
-        Dialog dialog = new Dialog(this);
+        dialog = new Dialog(this);
         dialog.setContentView(R.layout.change_image_dialog);
         dialog.setTitle("Change Profile Photo");
         dialog.show();
@@ -166,7 +148,9 @@ public class ProfileActivity extends AppCompatActivity {
             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                 startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE);
             }
+            if (dialog != null) dialog.dismiss();
         }
+
     }
 
     public void getImageFromGallery(View v) {
@@ -188,13 +172,14 @@ public class ProfileActivity extends AppCompatActivity {
             Intent selectFromGalleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
             selectFromGalleryIntent.setType("image/*");
             startActivityForResult(selectFromGalleryIntent, READ_EXTERNAL_STORAGE_REQUEST_CODE);
+            if (dialog != null) dialog.dismiss();
         }
+
     }
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Bitmap bitmap = null;
 
         if (resultCode == RESULT_OK) {
             if (requestCode == CHANGE_EMAIL_REQUEST_CODE) {
@@ -209,54 +194,16 @@ public class ProfileActivity extends AppCompatActivity {
 
             } else if (requestCode == READ_EXTERNAL_STORAGE_REQUEST_CODE || requestCode == CAMERA_REQUEST_CODE) {
                 Uri imageUri = data.getData();
-                pg = new ProgressDialog(this);
-                pg.setMessage("uploading image...");
-                pg.show();
 
                 if (requestCode == READ_EXTERNAL_STORAGE_REQUEST_CODE) {
-                    try {
-                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    mStorageRef.child("images").child(imageUri.getLastPathSegment()).putFile(imageUri)
-                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    Toast.makeText(getApplicationContext(), "Image uploaded", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    Toast.makeText(getApplicationContext(), "Upload failed", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                    uploadProfileImageFromMemory(imageUri);
 
                 }
                 if (requestCode == CAMERA_REQUEST_CODE) {
-
-                    bitmap = (Bitmap) data.getExtras().get("data");
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                    byte[] dataBAOS = baos.toByteArray();
-
-                    mStorageRef.child("images").child("filename" + new Date().getTime())
-                            .putBytes(dataBAOS)
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    Toast.makeText(getApplicationContext(), "Upload failed", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    Toast.makeText(getApplicationContext(), "Image uploaded", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                    uploadProfileImageFromCamera(data);
                 }
-                ((ImageView) findViewById(R.id.profile_image)).setImageBitmap(bitmap);
+//                ((ImageView) findViewById(R.id.profile_image)).setImageBitmap(bitmap);
+
             }
 
 
@@ -266,6 +213,49 @@ public class ProfileActivity extends AppCompatActivity {
 
         }
         if (pg != null) pg.dismiss();
+
+    }
+
+    private void uploadProfileImageFromCamera(Intent data) {
+
+        Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] dataBAOS = baos.toByteArray();
+
+        mStorageRef.child("users").child(mUser.getUid())
+                .putBytes(dataBAOS)
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Toast.makeText(getApplicationContext(), "Upload failed", Toast.LENGTH_SHORT).show();
+                        setProfileImageFromFirebase();
+                    }
+                })
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Toast.makeText(getApplicationContext(), "Image uploaded", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void uploadProfileImageFromMemory(Uri imageUri) {
+        mStorageRef.child("users").child(mUser.getUid())
+                .putFile(imageUri)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Toast.makeText(getApplicationContext(), "Image uploaded", Toast.LENGTH_SHORT).show();
+                        setProfileImageFromFirebase();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Toast.makeText(getApplicationContext(), "Upload failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
     }
 

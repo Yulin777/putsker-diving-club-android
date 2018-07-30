@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,6 +25,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -32,6 +34,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -62,11 +66,14 @@ public class MainActivity extends AppCompatActivity
 
     private void initialize() {
         toolbar = findViewById(R.id.toolbar);
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
         //setSupportActionBar(toolbar);
         initFab();
         initDrawer();
         initProfileImage();
         initUsername();
+        initSeniority();
     }
 
     private void initUsername() {
@@ -83,17 +90,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initProfileImage() {
-        mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
-
         mNavigationView = findViewById(R.id.nav_view);
         View header = mNavigationView.getHeaderView(0);
         profileImage = header.findViewById(R.id.nav_header_profile_image);
         if (mUser.getPhotoUrl() != null) {
             setProfileImageFromFirebase(); //set profile image from firebase if the user has one
         }
-        //uploadDataToFirebase();
-
     }
 
     private void initDrawer() {
@@ -119,11 +121,12 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void uploadDataToFirebase() {
+    private void initSeniority() {
         String userID = mUser.getUid();
         Map newPost = new HashMap();
         DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child(userID);
 
+        //todo string array of chosen uids
         if (userID.equals("pgxULqnRotc8pFO1pQhznp40ZjE3")) //aaa user id
             newPost.put("seniority", "yes");
         else newPost.put("seniority", "no");
@@ -236,23 +239,40 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public void setProfileImageFromFirebase() {
-        Intent intent;
-        if (Build.VERSION.SDK_INT < 19) {
-            intent = new Intent();
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-        } else {
-            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT); //workaround to fix specific permission
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mUser.getPhotoUrl());
+    private void setProfileImageFromFirebase() {
 
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                profileImage.setImageBitmap(bitmap);
-            } catch (Exception e) {
-                e.printStackTrace();
+        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+
+        mStorageRef.child("users").child(mUser.getUid()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Glide.with(MainActivity.this)
+                        .load(uri)
+                        .into(profileImage);
             }
-        }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(MainActivity.this, "could not load profile image from firebase.", Toast.LENGTH_SHORT).show();
+            }
+        });
+//
+//        Intent intent;
+//        if (Build.VERSION.SDK_INT < 19) {
+//            intent = new Intent();
+//            intent.setAction(Intent.ACTION_GET_CONTENT);
+//        } else {
+//            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT); //workaround to fix specific permission
+//            try {
+//                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mUser.getPhotoUrl());
+//
+//                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//                profileImage.setImageBitmap(bitmap);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     @Override
