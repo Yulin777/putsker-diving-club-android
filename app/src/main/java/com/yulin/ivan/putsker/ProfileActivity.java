@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -35,13 +36,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.util.Date;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -100,9 +105,14 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void setProfileImageFromFirebase() {
 
-        mStorageRef.child("users").child(mUser.getUid()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        final StorageReference profileImageRef = mStorageRef.child("users").child(mUser.getUid());
+        final Task<Uri> profileImageUri = profileImageRef.getDownloadUrl();
+        profileImageUri.addOnSuccessListener(new OnSuccessListener<Uri>() {
+
             @Override
             public void onSuccess(Uri uri) {
+//                saveImageToMemory(profileImageRef); //save to local for faster load on startup
+
                 Glide.with(ProfileActivity.this)
                         .load(uri)
                         .into(profilePicture);
@@ -115,6 +125,33 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    private void saveImageToMemory(StorageReference profileImageRef) {
+        try {
+            final File localFile = File.createTempFile("Images", mUser.getUid());
+            profileImageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+//                  Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                    Uri uri = Uri.fromFile(localFile);
+//                    URL url = null;
+//                    try {
+//                        url = localFile.toURI().toURL();
+                    profilePicture.setImageURI(uri);
+//                    }
+//                    catch (MalformedURLException e) {
+//                        e.printStackTrace();
+//                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(ProfileActivity.this, "could not find profile image.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void changePassword(View v) {
         startActivityForResult(new Intent(ProfileActivity.this, ChangePasswordActivity.class), CHANGE_PASSWORD_REQUEST_CODE);

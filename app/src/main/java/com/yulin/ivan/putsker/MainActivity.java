@@ -243,7 +243,8 @@ public class MainActivity extends AppCompatActivity
 
         StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
 
-        mStorageRef.child("users").child(mUser.getUid()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        Task<Uri> profileImageUri = mStorageRef.child("users").child(mUser.getUid()).getDownloadUrl();
+        profileImageUri.addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 Glide.with(MainActivity.this)
@@ -256,23 +257,6 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(MainActivity.this, "could not load profile image from firebase.", Toast.LENGTH_SHORT).show();
             }
         });
-//
-//        Intent intent;
-//        if (Build.VERSION.SDK_INT < 19) {
-//            intent = new Intent();
-//            intent.setAction(Intent.ACTION_GET_CONTENT);
-//        } else {
-//            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT); //workaround to fix specific permission
-//            try {
-//                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mUser.getPhotoUrl());
-//
-//                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//                profileImage.setImageBitmap(bitmap);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
     }
 
     @Override
