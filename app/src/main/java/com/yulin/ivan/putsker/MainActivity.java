@@ -38,12 +38,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ActivityCompat.OnRequestPermissionsResultCallback {
-
+    private final String[] seniors = new String[]{"pgxULqnRotc8pFO1pQhznp40ZjE3"};
     private static final int GET_ACCOUNTS_REQUEST_CODE = 1;
     private static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = 2;
     private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 3;
@@ -127,7 +128,8 @@ public class MainActivity extends AppCompatActivity
         DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child(userID);
 
         //todo string array of chosen uids
-        if (userID.equals("pgxULqnRotc8pFO1pQhznp40ZjE3")) //aaa user id
+//        if (userID.equals("pgxULqnRotc8pFO1pQhznp40ZjE3")) //aaa user id
+        if (Arrays.asList(seniors).contains(userID))
             newPost.put("seniority", "yes");
         else newPost.put("seniority", "no");
 
