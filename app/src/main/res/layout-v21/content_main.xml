@@ -37,7 +37,8 @@
                     android:adjustViewBounds="true"
                     android:background="#00ffffff"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/guides" />
+                    android:src="@drawable/guides"
+                    android:onClick="allGuidesClicked"/>
 
                 <TextView
                     android:layout_width="match_parent"
