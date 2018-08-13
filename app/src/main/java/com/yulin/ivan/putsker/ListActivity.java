@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -13,6 +14,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class ListActivity extends AppCompatActivity {
 
@@ -22,32 +24,48 @@ public class ListActivity extends AppCompatActivity {
     ArrayList<String> list;
     ArrayAdapter<String> adapter;
     Guide guide;
+    private FirebaseUser mUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
         guide = new Guide();
-        listView = (ListView)findViewById(R.id.listview);
+        listView = (ListView) findViewById(R.id.listview);
         db = FirebaseDatabase.getInstance();
-        ref = db.getReference("Guide");
+        ref = db.getReference().child("Guides");
+        //todo set write permissions for Guides
+
         list = new ArrayList<>();
-        adapter = new ArrayAdapter<String>(this, R.layout.guide_info, R.id.guideInfo, list);
-        ref.addValueEventListener(new ValueEventListener() {
+        adapter = new ArrayAdapter<String>(this, R.layout.guides, R.id.guideName, list);
+        listView.setAdapter(adapter);
 
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds: dataSnapshot.getChildren()){
-                    guide = ds.getValue(Guide.class);
-                    list.add(guide.getFirstName().toString() + " " + guide.getLastName().toString());
-                }
-                listView.setAdapter(adapter);
-            }
+        ref.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        //Get map of users in datasnapshot
+                        collectGuidesData((Map<String, Object>) dataSnapshot.getValue());
+                        adapter.notifyDataSetChanged();
+                    }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //handle databaseError
+                    }
+                });
+    }
 
-            }
-        });
+    private void collectGuidesData(Map<String, Object> guides) {
+
+
+        //iterate through each user, ignoring their UID
+        for (Map.Entry<String, Object> entry : guides.entrySet()) {
+
+            //Get user map
+            Map singleUser = (Map) entry.getValue();
+            list.add((String) singleUser.get("name"));
+        }
     }
 }

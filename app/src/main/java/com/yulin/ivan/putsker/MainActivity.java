@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity
 
 
     public void allGuidesClicked(View view) {
-        Intent intent = new Intent(MainActivity.this, ListActivity.class);
+        Intent intent = new Intent(this, ListActivity.class);
         startActivity(intent);
     }
 }
