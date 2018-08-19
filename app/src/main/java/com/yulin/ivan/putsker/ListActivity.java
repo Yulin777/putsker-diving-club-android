@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -17,15 +18,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ListActivity extends AppCompatActivity {
 
     ListView listView;
-    //ListView coursesList;
     FirebaseDatabase db;
     DatabaseReference ref;
     ArrayList<String> list;
+    Object o;
+
     ArrayAdapter<String> adapter;
     Guide guide;
     private FirebaseUser mUser;
@@ -37,7 +40,6 @@ public class ListActivity extends AppCompatActivity {
 
         guide = new Guide();
         listView = (ListView) findViewById(R.id.listview);
-        //coursesList = (ListView) findViewById(R.id.coursesList);
         db = FirebaseDatabase.getInstance();
         ref = db.getReference().child("Guides");
         //todo set write permissions for Guides
@@ -46,6 +48,20 @@ public class ListActivity extends AppCompatActivity {
         adapter = new ArrayAdapter<String>(this, R.layout.guides, R.id.guideName, list);
         listView.setAdapter(adapter);
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(ListActivity.this, CoursesActivity.class);
+                intent.putExtra("index", position);
+//                intent.putExtra("data", o);
+                //need to send courses data
+                Toast.makeText(ListActivity.this, "clicked!",
+                        Toast.LENGTH_SHORT).show();
+
+                startActivity(intent);
+
+            }
+        });
         ref.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
@@ -54,6 +70,7 @@ public class ListActivity extends AppCompatActivity {
                         collectGuidesData((Map<String, Object>) dataSnapshot.getValue());
                         adapter.notifyDataSetChanged();
                         Object o = dataSnapshot.getValue();
+
                     }
 
                     @Override
@@ -62,14 +79,6 @@ public class ListActivity extends AppCompatActivity {
                     }
                 });
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(ListActivity.this, CoursesActivity.class);
-                intent.putExtra("index", position);
-                //need to send courses data
-            }
-        });
 
     }
 

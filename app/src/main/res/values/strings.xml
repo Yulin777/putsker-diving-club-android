@@ -20,4 +20,17 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Courses Names -->
+    <string-array name="courses_names">
+        <item>One Star</item>
+        <item>Two Stars</item>
+        <item>Nitrox</item>
+    </string-array>
+    <!-- Courses Photos -->
+    <array name="courses_pics">
+        <item>@drawable/starfish1</item>
+        <item>@drawable/starfish2</item>
+        <item>@drawable/oxygentank</item>
+    </array>
 </resources>
