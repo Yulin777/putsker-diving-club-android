@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class ListActivity extends AppCompatActivity {
     DatabaseReference ref;
     ArrayList<String> list;
     Object o;
-
+    Map<String, Object> m;
     ArrayAdapter<String> adapter;
     Guide guide;
     private FirebaseUser mUser;
@@ -52,8 +53,9 @@ public class ListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(ListActivity.this, CoursesActivity.class);
-                intent.putExtra("index", position);
-//                intent.putExtra("data", o);
+//                intent.putExtra("index", position);
+                o = (Object) m.values().toArray()[position];
+                intent.putExtra("data", (Serializable) o);
                 //need to send courses data
                 Toast.makeText(ListActivity.this, "clicked!",
                         Toast.LENGTH_SHORT).show();
@@ -67,9 +69,10 @@ public class ListActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         //Get map of users in datasnapshot
-                        collectGuidesData((Map<String, Object>) dataSnapshot.getValue());
+                        m = (Map<String, Object>) dataSnapshot.getValue();
+                        collectGuidesData(m);
                         adapter.notifyDataSetChanged();
-                        Object o = dataSnapshot.getValue();
+//                        o = dataSnapshot.getValue();
 
                     }
 

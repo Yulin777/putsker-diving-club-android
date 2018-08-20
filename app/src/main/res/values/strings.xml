@@ -23,9 +23,9 @@
 
     <!-- Courses Names -->
     <string-array name="courses_names">
-        <item>One Star</item>
-        <item>Two Stars</item>
-        <item>Nitrox</item>
+        <item>star1</item>
+        <item>star2</item>
+        <item>nitrox</item>
     </string-array>
     <!-- Courses Photos -->
     <array name="courses_pics">

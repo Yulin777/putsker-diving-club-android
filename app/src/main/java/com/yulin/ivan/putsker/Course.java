@@ -8,7 +8,7 @@ public class Course {
 
     private String courseName;
     private int imageSrcID;
-    //groups array
+    //classes array
 
     public Course(String courseName, int imageSrcID) {
         this.courseName = courseName;
