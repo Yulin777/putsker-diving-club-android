@@ -46,6 +46,8 @@ public class CoursesActivity extends AppCompatActivity implements Serializable{
                 Intent intent = new Intent(CoursesActivity.this, ClassActivity.class);
                 Course c = (Course) listView.getItemAtPosition(position);
                 Object course = (Object) m.get(c.getCourseName());
+                intent.putExtra("isCourse", true);
+                intent.putExtra("courseName", c.getCourseName());
                 intent.putExtra("classes", (Serializable) course);
                 startActivity(intent);
 

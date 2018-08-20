@@ -45,7 +45,7 @@
         <activity android:name=".ListActivity" />
         <activity android:name=".NameChangeActivity" />
         <activity android:name=".CoursesActivity" />
-        <activity android:name=".ClassActivity"></activity>
+        <activity android:name=".ClassActivity" />
     </application>
 
 </manifest>
