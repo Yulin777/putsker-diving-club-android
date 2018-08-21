@@ -21,6 +21,7 @@ public class ClassActivity extends AppCompatActivity implements Serializable{
     Map<String, Object> classes;
     ArrayList<Object> groups;
     String courseName;
+    Boolean isCourse;
 
     @SuppressLint("ResourceType")
     @Override
@@ -33,8 +34,9 @@ public class ClassActivity extends AppCompatActivity implements Serializable{
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
         listView.setAdapter(adapter);
 
+        isCourse = getIntent().getExtras().getBoolean("isCourse");
         courseName = getIntent().getExtras().getString("courseName");
-        if(getIntent().getExtras().getBoolean("isCourse")){
+        if(isCourse){
             classes = (Map<String, Object>)getIntent().getSerializableExtra("classes");
             initializeClassesList();
         }
@@ -48,8 +50,7 @@ public class ClassActivity extends AppCompatActivity implements Serializable{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                //show star1 sub-courses
-//                if(courseName.equals("star1")){
+                if(isCourse){ // class is clicked
                     Intent intent = new Intent(ClassActivity.this, ClassActivity.class);
                     String name = listView.getItemAtPosition(position).toString();
                     Object subcourse = (Object) classes.get(name);
@@ -60,10 +61,15 @@ public class ClassActivity extends AppCompatActivity implements Serializable{
                     intent.putExtra("courseName", name);
                     intent.putExtra("classes", (Serializable) subcourse);
                     startActivity(intent);
-//                }
-//                else{ //open groups view
-//
-//                }
+                }
+                else { // group is clicked
+                    Intent intent = new Intent(ClassActivity.this, StudentActivity.class);
+//                    ArrayList<Object> group = (ArrayList<Object>) groups.get(position+1);
+                    Object group = (Object) groups.get(position+1);
+                    intent.putExtra("group", (Serializable) group);
+                    startActivity(intent);
+
+                }
             }
         });
 

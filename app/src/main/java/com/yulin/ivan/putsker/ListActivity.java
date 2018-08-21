@@ -53,12 +53,10 @@ public class ListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(ListActivity.this, CoursesActivity.class);
-//                intent.putExtra("index", position);
                 o = (Object) m.values().toArray()[position];
                 intent.putExtra("data", (Serializable) o);
-                //need to send courses data
-                Toast.makeText(ListActivity.this, "clicked!",
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(ListActivity.this, "clicked!",
+//                        Toast.LENGTH_SHORT).show();
 
                 startActivity(intent);
 
@@ -72,7 +70,6 @@ public class ListActivity extends AppCompatActivity {
                         m = (Map<String, Object>) dataSnapshot.getValue();
                         collectGuidesData(m);
                         adapter.notifyDataSetChanged();
-//                        o = dataSnapshot.getValue();
 
                     }
 
