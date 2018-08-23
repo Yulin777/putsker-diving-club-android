@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
-    android:layoutDirection="ltr">
+    android:layout_height="60dp"
+    android:layoutDirection="rtl">
 
     <ImageView
         android:id="@+id/coursePic"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_gravity="center"
         android:layout_margin="5dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,8 +30,8 @@
         android:layout_margin="8dp"
         android:focusableInTouchMode="false"
         android:hint="course name"
-        android:textSize="30sp"
-        app:layout_constraintLeft_toRightOf="@+id/coursePic"
+        android:textSize="20sp"
+        app:layout_constraintRight_toLeftOf="@+id/coursePic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />

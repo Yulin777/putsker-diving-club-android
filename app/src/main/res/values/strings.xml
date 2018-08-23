@@ -23,9 +23,9 @@
 
     <!-- Courses Names -->
     <string-array name="courses_names">
-        <item>star1</item>
-        <item>star2</item>
-        <item>nitrox</item>
+        <item>כוכב 1</item>
+        <item>כוכב 2</item>
+        <item>נייטרוקס</item>
     </string-array>
     <!-- Courses Photos -->
     <array name="courses_pics">

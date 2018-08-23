@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -33,11 +34,15 @@ public class ListActivity extends AppCompatActivity {
     ArrayAdapter<String> adapter;
     Guide guide;
     private FirebaseUser mUser;
+    Toolbar apptoolbar;
+    String title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+        title = getIntent().getExtras().getString("title");
+        initToolbar();
 
         guide = new Guide();
         listView = (ListView) findViewById(R.id.listview);
@@ -54,7 +59,11 @@ public class ListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(ListActivity.this, CoursesActivity.class);
                 o = (Object) m.values().toArray()[position];
+                Map<String, Object> guide = (Map<String, Object>) o;
+                String nextTitle = title + "/" + ((String) guide.get("name"));
                 intent.putExtra("data", (Serializable) o);
+                intent.putExtra("title", nextTitle);
+
 //                Toast.makeText(ListActivity.this, "clicked!",
 //                        Toast.LENGTH_SHORT).show();
 
@@ -80,6 +89,19 @@ public class ListActivity extends AppCompatActivity {
                 });
 
 
+    }
+
+    private void initToolbar() {
+        apptoolbar = findViewById(R.id.apptoolbar);
+        apptoolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
+        apptoolbar.setTitle(title);
+        apptoolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_right_white));
+        apptoolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
     private void collectGuidesData(Map<String, Object> guides) {

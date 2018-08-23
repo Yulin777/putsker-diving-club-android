@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -18,6 +19,8 @@ public class CoursesActivity extends AppCompatActivity implements Serializable{
     ArrayList<String> list;
     ArrayList<Course> courses;
     Map<String, Object> m;
+    Toolbar apptoolbar;
+    String title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +29,8 @@ public class CoursesActivity extends AppCompatActivity implements Serializable{
 
         m = (Map<String, Object>)getIntent().getSerializableExtra("data");
         courses = new ArrayList<Course>();
+        title = getIntent().getExtras().getString("title");
+        initToolbar();
 
         String[] course_names = getResources().getStringArray(R.array.courses_names);
         TypedArray course_pics = getResources().obtainTypedArray(R.array.courses_pics);
@@ -45,9 +50,23 @@ public class CoursesActivity extends AppCompatActivity implements Serializable{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(CoursesActivity.this, ClassActivity.class);
                 Course c = (Course) listView.getItemAtPosition(position);
-                Object course = (Object) m.get(c.getCourseName());
+                String courseName="";
+                switch (c.getCourseName()){
+                    case "כוכב 1":
+                        courseName = "star1";
+                        break;
+                    case "כוכב 2":
+                        courseName = "star2";
+                        break;
+                    case "נייטרוקס":
+                        courseName = "nitrox";
+                        break;
+                }
+                Object course = (Object) m.get(courseName);
+                String nextTitle = title + "/" + c.getCourseName();
+                intent.putExtra("title", nextTitle);
                 intent.putExtra("isCourse", true);
-                intent.putExtra("courseName", c.getCourseName());
+                intent.putExtra("courseName", courseName);
                 intent.putExtra("classes", (Serializable) course);
                 startActivity(intent);
 
@@ -56,5 +75,16 @@ public class CoursesActivity extends AppCompatActivity implements Serializable{
 
     }
 
-
+    private void initToolbar() {
+        apptoolbar = findViewById(R.id.apptoolbar);
+        apptoolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
+        apptoolbar.setTitle(title);
+        apptoolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_right_white));
+        apptoolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+    }
 }

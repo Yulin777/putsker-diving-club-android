@@ -3,9 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="60dp"
     android:layoutDirection="rtl">
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/student_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        android:src="@drawable/student"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        />
 
     <TextView
         android:id="@+id/studentName"
@@ -20,10 +35,12 @@
         android:layout_margin="8dp"
         android:focusableInTouchMode="false"
         android:hint="student name"
-        android:textSize="30sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/student_image"
         />
+
     <ImageButton
         android:id="@+id/studentInfo"
         android:layout_width="50dp"

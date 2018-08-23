@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -18,6 +19,8 @@ public class StudentActivity extends AppCompatActivity {
     ArrayList<Student> students;
     Map<String, Object> m;
     ArrayList<Object> arr;
+    Toolbar apptoolbar;
+    String title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +28,9 @@ public class StudentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_student);
 
         arr = (ArrayList<Object>)getIntent().getSerializableExtra("group");
+        title = getIntent().getExtras().getString("title");
         students = new ArrayList<Student>();
+        initToolbar();
 
         for (int i = 1; i < arr.size(); i++) {
             m = (Map<String, Object>) arr.get(i);
@@ -52,4 +57,18 @@ public class StudentActivity extends AppCompatActivity {
         });
 
     }
+
+    private void initToolbar() {
+        apptoolbar = findViewById(R.id.apptoolbar);
+        apptoolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
+        apptoolbar.setTitle(title);
+        apptoolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_right_white));
+        apptoolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+    }
+
 }

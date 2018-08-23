@@ -69,7 +69,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/groupsButton"
-                    android:text="All groups"
+                    android:text="My groups"
                     android:textAlignment="center" />
             </RelativeLayout>
 

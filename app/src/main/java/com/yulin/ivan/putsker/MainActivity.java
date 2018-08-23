@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity
         toolbar = findViewById(R.id.toolbar);
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
-        //setSupportActionBar(toolbar);
         initFab();
         initDrawer();
         initProfileImage();
@@ -272,6 +271,7 @@ public class MainActivity extends AppCompatActivity
 
     public void allGuidesClicked(View view) {
         Intent intent = new Intent(this, ListActivity.class);
+        intent.putExtra("title", "מדריכים");
         startActivity(intent);
     }
 }
