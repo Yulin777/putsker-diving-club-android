@@ -60,7 +60,7 @@ public class ClassActivity extends AppCompatActivity implements Serializable{
                     Intent intent = new Intent(ClassActivity.this, ClassActivity.class);
                     String name = listView.getItemAtPosition(position).toString();
                     Object subcourse = (Object) classes.get(name);
-                    nextTitle = title + "/" + name;
+                    nextTitle = title + ">" + name;
                     if(courseName.equals("star1"))
                         intent.putExtra("isCourse", true);
                     else
@@ -74,7 +74,7 @@ public class ClassActivity extends AppCompatActivity implements Serializable{
                     Intent intent = new Intent(ClassActivity.this, StudentActivity.class);
 //                    ArrayList<Object> group = (ArrayList<Object>) groups.get(position+1);
                     Object group = (Object) groups.get(position+1);
-                    nextTitle = title + "/" + ((ArrayList<Object>) group).get(0);
+                    nextTitle = title + ">" + ((ArrayList<Object>) group).get(0);
                     intent.putExtra("title", nextTitle);
                     intent.putExtra("group", (Serializable) group);
                     startActivity(intent);
