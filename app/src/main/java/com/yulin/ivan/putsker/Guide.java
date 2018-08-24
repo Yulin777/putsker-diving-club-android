@@ -15,7 +15,7 @@ public class Guide {
     Date insuranceExpiration;
     Date licenseExpiration;
 
-    public Guide(){
+    public Guide() {
 
     }
 

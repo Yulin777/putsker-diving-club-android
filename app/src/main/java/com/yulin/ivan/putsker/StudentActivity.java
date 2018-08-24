@@ -1,5 +1,6 @@
 package com.yulin.ivan.putsker;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.support.v7.app.AppCompatActivity;
@@ -21,20 +22,21 @@ public class StudentActivity extends AppCompatActivity {
     ArrayList<Object> arr;
     Toolbar apptoolbar;
     String title;
+    Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student);
 
-        arr = (ArrayList<Object>)getIntent().getSerializableExtra("group");
+        arr = (ArrayList<Object>) getIntent().getSerializableExtra("group");
         title = getIntent().getExtras().getString("title");
         students = new ArrayList<Student>();
         initToolbar();
 
         for (int i = 1; i < arr.size(); i++) {
             m = (Map<String, Object>) arr.get(i);
-            Student item = new Student((String) m.get("name"), (String) m.get("phone"), (Boolean)m.get("hasGear"));
+            Student item = new Student((String) m.get("name"), (String) m.get("phone"), (Boolean) m.get("hasGear"));
             students.add(item);
         }
 
@@ -69,6 +71,13 @@ public class StudentActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+    }
+
+    public void showStudentModal(View v) {
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.studentpopup);
+        dialog.setTitle("Change Profile Photo");
+        dialog.show();
     }
 
 }

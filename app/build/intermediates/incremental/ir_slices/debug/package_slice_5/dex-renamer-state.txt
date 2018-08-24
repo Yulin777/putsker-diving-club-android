@@ -1,4 +1,4 @@
-#Mon Aug 13 23:02:14 IDT 2018
+#Fri Aug 24 20:42:32 IDT 2018
 base.0=/Users/Ivan/Documents/College/Android/putskerProject/app/build/intermediates/transforms/dexMerger/debug/141
 path.0=classes.dex
 renamed.0=classes.dex
