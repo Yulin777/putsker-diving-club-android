@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -57,7 +56,7 @@ public class CustomStudentAdapter extends BaseAdapter {
             holder = new CustomStudentAdapter.ViewHolder();
 
             holder.student_name = (TextView) convertView
-                    .findViewById(R.id.studentName);
+                    .findViewById(R.id.studentNameList);
 
             Student row_pos = rowItems.get(position);
 
@@ -68,5 +67,7 @@ public class CustomStudentAdapter extends BaseAdapter {
             holder = (CustomStudentAdapter.ViewHolder) convertView.getTag();
         }
 
-        return convertView;    }
+        return convertView;
+    }
+
 }

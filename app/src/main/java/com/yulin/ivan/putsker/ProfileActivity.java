@@ -266,13 +266,13 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
                         Toast.makeText(getApplicationContext(), "Upload failed", Toast.LENGTH_SHORT).show();
-                        setProfileImageFromFirebase();
                     }
                 })
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Toast.makeText(getApplicationContext(), "Image uploaded", Toast.LENGTH_SHORT).show();
+                        setProfileImageFromFirebase();
                     }
                 });
     }

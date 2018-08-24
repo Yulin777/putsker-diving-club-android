@@ -60,7 +60,7 @@ public class ListActivity extends AppCompatActivity {
                 Intent intent = new Intent(ListActivity.this, CoursesActivity.class);
                 o = (Object) m.values().toArray()[position];
                 Map<String, Object> guide = (Map<String, Object>) o;
-                String nextTitle = title + ">" + ((String) guide.get("name"));
+                String nextTitle = title + " > " + ((String) guide.get("name"));
                 intent.putExtra("data", (Serializable) o);
                 intent.putExtra("title", nextTitle);
 

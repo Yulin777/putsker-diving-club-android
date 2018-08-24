@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="60dp"
+    android:descendantFocusability="blocksDescendants"
     android:layoutDirection="rtl">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/student_image"
+        android:id="@+id/student_image_list"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
@@ -22,7 +23,8 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/studentName"
+        android:id="@+id/studentNameList"
+        android:layoutDirection="rtl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -35,7 +37,7 @@
         android:hint="student name"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/student_image"
+        app:layout_constraintRight_toLeftOf="@id/student_image_modal"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -50,7 +52,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/studentName"
+        app:layout_constraintStart_toEndOf="@id/studentNameList"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_info_details" />
 

@@ -63,7 +63,7 @@ public class CoursesActivity extends AppCompatActivity implements Serializable{
                         break;
                 }
                 Object course = (Object) m.get(courseName);
-                String nextTitle = title + ">" + c.getCourseName();
+                String nextTitle = title + " > " + c.getCourseName();
                 intent.putExtra("title", nextTitle);
                 intent.putExtra("isCourse", true);
                 intent.putExtra("courseName", courseName);
