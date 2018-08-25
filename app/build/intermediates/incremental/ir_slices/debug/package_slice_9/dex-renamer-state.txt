@@ -1,4 +1,0 @@
-#Sat Aug 25 01:00:48 IDT 2018
-base.0=/Users/Ivan/Documents/College/Android/putskerProject/app/build/intermediates/transforms/dexMerger/debug/162
-path.0=classes.dex
-renamed.0=classes.dex
