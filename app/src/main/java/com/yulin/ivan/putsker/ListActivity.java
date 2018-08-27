@@ -19,7 +19,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +32,7 @@ public class ListActivity extends AppCompatActivity {
     FirebaseDatabase db;
     DatabaseReference ref;
     ArrayList<String> list;
+    ArrayList<Guide> guideslist;
     Object o;
     Map<String, Object> m;
     ArrayAdapter<String> adapter;
@@ -51,6 +55,7 @@ public class ListActivity extends AppCompatActivity {
         //todo set write permissions for Guides
 
         list = new ArrayList<>();
+        guideslist = new ArrayList<>();
         adapter = new ArrayAdapter<String>(this, R.layout.guides, R.id.guideName, list);
         listView.setAdapter(adapter);
 
@@ -90,6 +95,9 @@ public class ListActivity extends AppCompatActivity {
 
 
     }
+    public void showGuideInfo(){
+
+    }
 
     private void initToolbar() {
         apptoolbar = findViewById(R.id.apptoolbar);
@@ -111,6 +119,20 @@ public class ListActivity extends AppCompatActivity {
 
             //Get user map
             Map singleUser = (Map) entry.getValue();
+
+            String s1 = (String) singleUser.get("licenseExpiration");
+            String s2 = (String) singleUser.get("insuranceExpiration");
+            SimpleDateFormat format = new SimpleDateFormat("dd.MM.yy");
+            Date d1 = null, d2 = null;
+            try {
+                d1 = format.parse(s1);
+                d2 = format.parse(s2);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Guide g = new Guide(entry.getKey(), (String) singleUser.get("name"),(String) singleUser.get("lastName"),
+                    (String) singleUser.get("email"), (Boolean) singleUser.get("senior"), d1, d2);
+            guideslist.add(g);
             list.add((String) singleUser.get("name"));
         }
     }
