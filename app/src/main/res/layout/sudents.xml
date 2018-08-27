@@ -24,7 +24,6 @@
 
     <TextView
         android:id="@+id/studentNameList"
-        android:layoutDirection="rtl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -48,10 +47,10 @@
         android:background="@android:color/transparent"
         android:focusable="false"
         android:focusableInTouchMode="false"
+        android:onClick="_showStudentModal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@id/studentNameList"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_info_details" />
 

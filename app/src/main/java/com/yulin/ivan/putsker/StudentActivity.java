@@ -2,6 +2,7 @@ package com.yulin.ivan.putsker;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,13 +14,14 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +38,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class StudentActivity extends AppCompatActivity {
+public class StudentActivity extends ListActivity {
     ListView studentsList;
     ArrayList<Student> students;
     Map<String, Object> m;
@@ -45,6 +47,8 @@ public class StudentActivity extends AppCompatActivity {
     String title;
     Dialog dialog;
     ProgressDialog pg;
+    View studentModal;
+
     private StorageReference mStorageRef;
     private ImageView profilePicture;
 
@@ -59,9 +63,14 @@ public class StudentActivity extends AppCompatActivity {
         mStorageRef = FirebaseStorage.getInstance().getReference();
         arr = (ArrayList<Object>) getIntent().getSerializableExtra("group");
         title = getIntent().getExtras().getString("title");
-        students = new ArrayList<Student>();
 
         initToolbar();
+        initStudentList();
+
+    }
+
+    private void initStudentList() {
+        students = new ArrayList<Student>();
 
         for (int i = 1; i < arr.size(); i++) {
             m = (Map<String, Object>) arr.get(i);
@@ -69,17 +78,17 @@ public class StudentActivity extends AppCompatActivity {
             students.add(item);
         }
 
-        studentsList = (ListView) findViewById(R.id.StudentsList);
-        CustomStudentAdapter adapter = new CustomStudentAdapter(this, students);
-
-        studentsList.setAdapter(adapter);
-        studentsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Object clickedStudent = parent.getAdapter().getItem(position);
-                showStudentModal(clickedStudent);
-            }
-        });
+        studentsList = (ListView) findViewById(android.R.id.list);
+        setListAdapter(new CustomStudentAdapter(this, students));
+//        CustomStudentAdapter adapter = new CustomStudentAdapter(this, students);
+//        studentsList.setAdapter(adapter);
+//        studentsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Student clickedStudent = (Student) parent.getAdapter().getItem(position);
+//                showStudentModal(clickedStudent);
+//            }
+//        });
 
     }
 
@@ -95,22 +104,45 @@ public class StudentActivity extends AppCompatActivity {
             }
         });
     }
+//
+//    public void showStudentModal(Student o) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//
+//        TextView name = studentModal.findViewById(R.id.studentNameModal);
+//        TextView phone = studentModal.findViewById(R.id.studentPhoneModal);
+//        TextView gear = studentModal.findViewById(R.id.hasGearModal);
+//
+//        builder.setView(studentModal);
+//        name.setText(o.getName());
+//        phone.setText(o.getPhone());
+//        gear.setText((o.getHasGear() ? "Has " : "Does not have ") + "Gear");
+//
+//        builder.create().show();
+//    }
 
-    public void showStudentModal(Object o) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    public void _showStudentModal(View v) {
+        final int position = getListView().getPositionForView((View) v.getParent());
+        Student currentStudent = (Student) this.getListAdapter().getItem(position);
+
         LayoutInflater inflater = getLayoutInflater();
+        studentModal = inflater.inflate(R.layout.studentmodal, null);
+        TextView name = studentModal.findViewById(R.id.studentNameModal);
+        TextView phone = studentModal.findViewById(R.id.studentPhoneModal);
+        TextView gear = studentModal.findViewById(R.id.hasGearModal);
 
-        View content = inflater.inflate(R.layout.studentpopup, null);
-        TextView name = content.findViewById(R.id.studentNameModal);
-        TextView phone = content.findViewById(R.id.studentPhoneModal);
-        TextView gear = content.findViewById(R.id.hasGearModal);
+        name.setText(currentStudent.getName());
+        phone.setText(currentStudent.getPhone());
+        gear.setText((currentStudent.getHasGear() ? "Has " : "Does not have ") + "Gear");
 
-        builder.setView(content);
-        name.setText(((Student) o).getName());
-        phone.setText(((Student) o).getPhone());
-        gear.setText((((Student) o).getHasGear() ? "Has " : "Does not have ") + "Gear");
+        new AlertDialog.Builder(this)
+                .setView(studentModal)
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
 
-        builder.create().show();
+                    }
+                })
+                .create().show();
     }
 
     public void changeStudentImage(View v) {
@@ -173,7 +205,6 @@ public class StudentActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if (resultCode == RESULT_OK) {
             if (requestCode == READ_EXTERNAL_STORAGE_REQUEST_CODE || requestCode == CAMERA_REQUEST_CODE) {
                 Uri imageUri = data.getData();
@@ -250,7 +281,7 @@ public class StudentActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Uri uri) {
 //                saveImageToMemory(profileImageRef); //save to local for faster load on startup
-                profilePicture = findViewById(R.id.student_image_modal);
+                profilePicture = studentModal.findViewById(R.id.studentImageModal);
                 Glide.with(StudentActivity.this)
                         .load(uri)
                         .into(profilePicture);
@@ -261,10 +292,5 @@ public class StudentActivity extends AppCompatActivity {
                 Toast.makeText(StudentActivity.this, "could not load profile image from firebase.", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-
-    public void temp(View view) {
-        System.out.println("lala");
     }
 }
