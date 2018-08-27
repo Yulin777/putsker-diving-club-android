@@ -123,22 +123,20 @@ public class StudentActivity extends ListActivity {
     }
 
     public void _showStudentModal(View v) {
-        ViewParent parent = v.getParent();
         final int position = getListView().getPositionForView((View) v.getParent());
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        Student currentStudent = (Student) this.getListAdapter().getItem(position);
 
         TextView name = studentModal.findViewById(R.id.studentNameModal);
         TextView phone = studentModal.findViewById(R.id.studentPhoneModal);
         TextView gear = studentModal.findViewById(R.id.hasGearModal);
 
-        Student o = (Student) this.getListAdapter().getItem(position);
-        builder.setView(studentModal);
-        name.setText(o.getName());
-        phone.setText(o.getPhone());
-        gear.setText((o.getHasGear() ? "Has " : "Does not have ") + "Gear");
+        name.setText(currentStudent.getName());
+        phone.setText(currentStudent.getPhone());
+        gear.setText((currentStudent.getHasGear() ? "Has " : "Does not have ") + "Gear");
 
-        builder.create().show();
+        new AlertDialog.Builder(this)
+                .setView(studentModal)
+                .create().show();
     }
 
     public void changeStudentImage(View v) {
@@ -201,7 +199,7 @@ public class StudentActivity extends ListActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        dialog.dismiss();
         if (resultCode == RESULT_OK) {
             if (requestCode == READ_EXTERNAL_STORAGE_REQUEST_CODE || requestCode == CAMERA_REQUEST_CODE) {
                 Uri imageUri = data.getData();
