@@ -45,14 +45,15 @@
         android:id="@+id/studentInfo"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:onClick="_showStudentModal"
         android:background="@android:color/transparent"
         android:focusable="false"
         android:focusableInTouchMode="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@id/studentNameList"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_info_details" />
+
 
 </android.support.constraint.ConstraintLayout>
