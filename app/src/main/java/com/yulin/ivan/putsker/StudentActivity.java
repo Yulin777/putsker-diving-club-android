@@ -48,6 +48,8 @@ public class StudentActivity extends ListActivity {
     Dialog dialog;
     ProgressDialog pg;
     View studentModal;
+    Student currentStudent;
+    ImageView studentImageModal;
 
     private StorageReference mStorageRef;
     private ImageView profilePicture;
@@ -122,17 +124,19 @@ public class StudentActivity extends ListActivity {
 
     public void showStudentModal(View v) {
         final int position = getListView().getPositionForView((View) v.getParent());
-        Student currentStudent = (Student) this.getListAdapter().getItem(position);
+        currentStudent = (Student) this.getListAdapter().getItem(position);
 
         LayoutInflater inflater = getLayoutInflater();
         studentModal = inflater.inflate(R.layout.studentmodal, null);
         TextView name = studentModal.findViewById(R.id.studentNameModal);
         TextView phone = studentModal.findViewById(R.id.studentPhoneModal);
         TextView gear = studentModal.findViewById(R.id.hasGearModal);
+        studentImageModal = studentModal.findViewById(R.id.studentImageModal);
 
         name.setText(currentStudent.getName());
         phone.setText(currentStudent.getPhone());
         gear.setText((currentStudent.getHasGear() ? "Has " : "Does not have ") + "Gear");
+        setStudentImageModal();
 
         new AlertDialog.Builder(this)
                 .setView(studentModal)
@@ -143,6 +147,26 @@ public class StudentActivity extends ListActivity {
                     }
                 })
                 .create().show();
+    }
+
+    private void setStudentImageModal() {
+
+         mStorageRef = FirebaseStorage.getInstance().getReference();
+
+        Task<Uri> profileImageUri = mStorageRef.child("students").child(currentStudent.getPhone()).getDownloadUrl();
+        profileImageUri.addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Glide.with(StudentActivity.this)
+                        .load(uri)
+                        .into(studentImageModal);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(StudentActivity.this, "could not load profile image from firebase.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void changeStudentImage(View v) {
@@ -235,7 +259,7 @@ public class StudentActivity extends ListActivity {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] dataBAOS = baos.toByteArray();
 
-        mStorageRef.child("students").child(/*phone number is the unique id*/ "0527777777")
+        mStorageRef.child("students").child(currentStudent.getPhone())
                 .putBytes(dataBAOS)
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -253,7 +277,7 @@ public class StudentActivity extends ListActivity {
     }
 
     private void uploadProfileImageFromMemory(Uri imageUri) {
-        mStorageRef.child("students").child(/*phone number is the unique id*/"0527777777")
+        mStorageRef.child("students").child(currentStudent.getPhone())
                 .putFile(imageUri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -274,7 +298,7 @@ public class StudentActivity extends ListActivity {
 
     public void setStudentImageFromFirebase() {
 
-        final StorageReference profileImageRef = mStorageRef.child("students").child(/*phone number is the unique id*/"0527777777");
+        final StorageReference profileImageRef = mStorageRef.child("students").child(currentStudent.getPhone());
         final Task<Uri> profileImageUri = profileImageRef.getDownloadUrl();
         profileImageUri.addOnSuccessListener(new OnSuccessListener<Uri>() {
 
