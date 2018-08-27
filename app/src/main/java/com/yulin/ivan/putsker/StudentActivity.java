@@ -78,8 +78,6 @@ public class StudentActivity extends ListActivity {
             students.add(item);
         }
 
-        LayoutInflater inflater = getLayoutInflater();
-        studentModal = inflater.inflate(R.layout.studentmodal, null);
         studentsList = (ListView) findViewById(android.R.id.list);
         setListAdapter(new CustomStudentAdapter(this, students));
 //        CustomStudentAdapter adapter = new CustomStudentAdapter(this, students);
@@ -106,26 +104,28 @@ public class StudentActivity extends ListActivity {
             }
         });
     }
-
-    public void showStudentModal(Student o) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        TextView name = studentModal.findViewById(R.id.studentNameModal);
-        TextView phone = studentModal.findViewById(R.id.studentPhoneModal);
-        TextView gear = studentModal.findViewById(R.id.hasGearModal);
-
-        builder.setView(studentModal);
-        name.setText(o.getName());
-        phone.setText(o.getPhone());
-        gear.setText((o.getHasGear() ? "Has " : "Does not have ") + "Gear");
-
-        builder.create().show();
-    }
+//
+//    public void showStudentModal(Student o) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//
+//        TextView name = studentModal.findViewById(R.id.studentNameModal);
+//        TextView phone = studentModal.findViewById(R.id.studentPhoneModal);
+//        TextView gear = studentModal.findViewById(R.id.hasGearModal);
+//
+//        builder.setView(studentModal);
+//        name.setText(o.getName());
+//        phone.setText(o.getPhone());
+//        gear.setText((o.getHasGear() ? "Has " : "Does not have ") + "Gear");
+//
+//        builder.create().show();
+//    }
 
     public void _showStudentModal(View v) {
         final int position = getListView().getPositionForView((View) v.getParent());
         Student currentStudent = (Student) this.getListAdapter().getItem(position);
 
+        LayoutInflater inflater = getLayoutInflater();
+        studentModal = inflater.inflate(R.layout.studentmodal, null);
         TextView name = studentModal.findViewById(R.id.studentNameModal);
         TextView phone = studentModal.findViewById(R.id.studentPhoneModal);
         TextView gear = studentModal.findViewById(R.id.hasGearModal);
@@ -136,6 +136,12 @@ public class StudentActivity extends ListActivity {
 
         new AlertDialog.Builder(this)
                 .setView(studentModal)
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+
+                    }
+                })
                 .create().show();
     }
 
@@ -199,7 +205,6 @@ public class StudentActivity extends ListActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        dialog.dismiss();
         if (resultCode == RESULT_OK) {
             if (requestCode == READ_EXTERNAL_STORAGE_REQUEST_CODE || requestCode == CAMERA_REQUEST_CODE) {
                 Uri imageUri = data.getData();
