@@ -120,7 +120,7 @@ public class StudentActivity extends ListActivity {
 //        builder.create().show();
 //    }
 
-    public void _showStudentModal(View v) {
+    public void showStudentModal(View v) {
         final int position = getListView().getPositionForView((View) v.getParent());
         Student currentStudent = (Student) this.getListAdapter().getItem(position);
 
