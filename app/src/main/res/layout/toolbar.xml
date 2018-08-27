@@ -4,7 +4,6 @@
     android:layout_height="wrap_content"
     android:background="@color/Dark_Turquoise"
     android:elevation="4dp"
-    android:layoutDirection="rtl"
-    >
+    android:layoutDirection="rtl">
 
 </android.support.v7.widget.Toolbar>
