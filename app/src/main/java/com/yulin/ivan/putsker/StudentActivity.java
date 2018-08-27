@@ -1,9 +1,11 @@
 package com.yulin.ivan.putsker;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,8 +20,10 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -36,6 +40,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class StudentActivity extends ListActivity {
@@ -151,7 +156,7 @@ public class StudentActivity extends ListActivity {
 
     private void setStudentImageModal() {
 
-         mStorageRef = FirebaseStorage.getInstance().getReference();
+        mStorageRef = FirebaseStorage.getInstance().getReference();
 
         Task<Uri> profileImageUri = mStorageRef.child("students").child(currentStudent.getPhone()).getDownloadUrl();
         profileImageUri.addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -317,4 +322,85 @@ public class StudentActivity extends ListActivity {
             }
         });
     }
+
+
+    public class CustomStudentAdapter extends BaseAdapter {
+
+        Context context;
+        List<Student> rowItems;
+
+        CustomStudentAdapter(Context context, List<Student> rowItems) {
+            this.context = context;
+            this.rowItems = rowItems;
+        }
+
+        @Override
+        public int getCount() {
+            return rowItems.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return rowItems.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return rowItems.indexOf(getItem(position));
+        }
+
+        /* private view holder class */
+        private class ViewHolder {
+            TextView student_name;
+            ImageView image;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            CustomStudentAdapter.ViewHolder holder = null;
+
+            LayoutInflater mInflater = (LayoutInflater) context
+                    .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.sudents, null);
+                holder = new CustomStudentAdapter.ViewHolder();
+
+                holder.student_name = (TextView) convertView.findViewById(R.id.studentNameList);
+
+                Student row_pos = rowItems.get(position);
+
+                holder.student_name.setText(row_pos.getName());
+
+                convertView.setTag(holder);
+            } else {
+                holder = (CustomStudentAdapter.ViewHolder) convertView.getTag();
+            }
+            holder.image = (ImageView) convertView.findViewById(R.id.student_image_list);
+            Student currentStudent = (Student) getItem(position);
+            String currentPhone = currentStudent.getPhone();
+            setStudentImage(holder.image, currentPhone);
+
+            return convertView;
+        }
+
+        private void setStudentImage(final ImageView image, String phone) {
+
+            Task<Uri> profileImageUri;
+            profileImageUri = mStorageRef.child("students").child(phone).getDownloadUrl();
+            profileImageUri.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Glide.with(StudentActivity.this)
+                            .load(uri)
+                            .into(image);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    //Toast.makeText(StudentActivity.this, "could not load profile image from firebase.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
 }
+
