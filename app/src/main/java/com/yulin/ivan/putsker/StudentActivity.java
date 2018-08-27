@@ -16,6 +16,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -75,16 +76,8 @@ public class StudentActivity extends AppCompatActivity {
         studentsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Object clickedStudent = studentsList.getItemAtPosition(position);
-                showStudentModal(view);
-//                Intent intent = new Intent(StudentActivity.this, ClassActivity.class);
-//                Student s = (Student) studentsList.getItemAtPosition(position);
-//                Object student = (Object) m.get(s.getCourseName());
-//                intent.putExtra("isCourse", true);
-//                intent.putExtra("courseName", s.getCourseName());
-//                intent.putExtra("classes", (Serializable) course);
-//                startActivity(intent);
-
+                Object clickedStudent = parent.getAdapter().getItem(position);
+                showStudentModal(clickedStudent);
             }
         });
 
@@ -103,14 +96,21 @@ public class StudentActivity extends AppCompatActivity {
         });
     }
 
-    public void showStudentModal(View v) {
-        dialog = new Dialog(this);
-        TextView name = (TextView)findViewById( R.id.studentNameModal);
-        TextView _name = (TextView)findViewById( R.id.studentNameList);
-        name.setText(_name.getText().toString());
-        dialog.setContentView(R.layout.studentpopup);
-        dialog.setTitle("Change Profile Photo");
-        dialog.show();
+    public void showStudentModal(Object o) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+
+        View content = inflater.inflate(R.layout.studentpopup, null);
+        TextView name = content.findViewById(R.id.studentNameModal);
+        TextView phone = content.findViewById(R.id.studentPhoneModal);
+        TextView gear = content.findViewById(R.id.hasGearModal);
+
+        builder.setView(content);
+        name.setText(((Student) o).getName());
+        phone.setText(((Student) o).getPhone());
+        gear.setText((((Student) o).getHasGear() ? "Has " : "Does not have ") + "Gear");
+
+        builder.create().show();
     }
 
     public void changeStudentImage(View v) {
