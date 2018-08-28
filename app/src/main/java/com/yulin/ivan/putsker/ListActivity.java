@@ -1,15 +1,18 @@
 package com.yulin.ivan.putsker;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -23,10 +26,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
-public class ListActivity extends AppCompatActivity {
+public class ListActivity extends android.app.ListActivity {
 
     ListView listView;
     FirebaseDatabase db;
@@ -41,6 +43,12 @@ public class ListActivity extends AppCompatActivity {
     Toolbar apptoolbar;
     String title;
 
+    Dialog dialog;
+    ProgressDialog pg;
+    View guideModal;
+    ImageView guideImageModal;
+    Guide currentGuide;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +57,7 @@ public class ListActivity extends AppCompatActivity {
         initToolbar();
 
         guide = new Guide();
-        listView = (ListView) findViewById(R.id.listview);
+        listView = (ListView) findViewById(android.R.id.list);
         db = FirebaseDatabase.getInstance();
         ref = db.getReference().child("Guides");
         //todo set write permissions for Guides
@@ -95,7 +103,36 @@ public class ListActivity extends AppCompatActivity {
 
 
     }
-    public void showGuideInfo(){
+
+    private Guide getGuideAt(int position){
+        return guideslist.get(position);
+    }
+
+    public void showGuideInfo(View v){
+        final int position = getListView().getPositionForView((View) v.getParent());
+        currentGuide = getGuideAt(position);
+
+        LayoutInflater inflater = getLayoutInflater();
+        guideModal = inflater.inflate(R.layout.guidepopup, null);
+        TextView name = guideModal.findViewById(R.id.guideNameModal);
+//        TextView phone = guideModal.findViewById(R.id.studentPhoneModal);
+//        TextView gear = guideModal.findViewById(R.id.hasGearModal);
+//        guideImageModal = guideModal.findViewById(R.id.studentImageModal);
+//
+        name.setText(currentGuide.getFirstName() + " " + currentGuide.getLastName());
+//        phone.setText(currentGuide.getPhone());
+//        gear.setText((currentGuide.getHasGear() ? "Has " : "Does not have ") + "Gear");
+//        setStudentImageModal();
+
+        new AlertDialog.Builder(this)
+                .setView(guideModal)
+//                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                    @Override
+//                    public void onDismiss(DialogInterface dialog) {
+//
+//                    }
+//                })
+                .create().show();
 
     }
 
