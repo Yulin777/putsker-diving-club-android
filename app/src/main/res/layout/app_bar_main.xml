@@ -9,8 +9,9 @@
 
     <ImageView android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:background="@drawable/app_background"
+        android:src="@drawable/app_background"
         android:alpha="0.2"
+        android:scaleType="centerCrop"
         />
 
     <android.support.design.widget.AppBarLayout
