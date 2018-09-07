@@ -6,37 +6,42 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_camera"
+            android:enabled="false"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:title="In Construction" />
         <item
             android:id="@+id/nav_gallery"
+            android:enabled="false"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:title="In Construction" />
         <item
             android:id="@+id/nav_slideshow"
+            android:enabled="false"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:title="In Construction" />
         <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Profile Settings"/>
+            android:title="Profile Settings" />
     </group>
 
     <item android:title="Communicate">
         <menu>
             <item
                 android:id="@+id/nav_share"
+                android:enabled="false"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:title="In Construction" />
             <item
                 android:id="@+id/nav_send"
+                android:enabled="false"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="In Construction" />
         </menu>
     </item>
     <item
         android:id="@+id/nav_logout"
         android:icon="@drawable/ic_arrow_back_black_24dp"
-        android:title="Log out"/>
+        android:title="Log out" />
 
 </menu>
