@@ -1,8 +1,10 @@
 package com.yulin.ivan.putsker;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -10,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -77,9 +80,6 @@ public class ListActivity extends android.app.ListActivity {
                 intent.putExtra("data", (Serializable) o);
                 intent.putExtra("title", nextTitle);
 
-//                Toast.makeText(ListActivity.this, "clicked!",
-//                        Toast.LENGTH_SHORT).show();
-
                 startActivity(intent);
 
             }
@@ -100,18 +100,16 @@ public class ListActivity extends android.app.ListActivity {
                         //handle databaseError
                     }
                 });
-
-
     }
 
-    private Guide getGuideAt(int position){
+    private Guide getGuideAt(int position) {
         return guideslist.get(position);
     }
 
-    public void showGuideInfo(View v){
+    @SuppressLint("NewApi")
+    public void showGuideInfo(View v) {
         final int position = getListView().getPositionForView((View) v.getParent());
         currentGuide = getGuideAt(position);
-
         LayoutInflater inflater = getLayoutInflater();
         guideModal = inflater.inflate(R.layout.guidepopup, null);
         TextView name = guideModal.findViewById(R.id.guideNameModal);
@@ -126,14 +124,13 @@ public class ListActivity extends android.app.ListActivity {
 
         new AlertDialog.Builder(this)
                 .setView(guideModal)
-//                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                    @Override
-//                    public void onDismiss(DialogInterface dialog) {
-//
-//                    }
-//                })
-                .create().show();
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
 
+                    }
+                })
+                .create().show();
     }
 
     private void initToolbar() {
@@ -167,7 +164,7 @@ public class ListActivity extends android.app.ListActivity {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            Guide g = new Guide(entry.getKey(), (String) singleUser.get("name"),(String) singleUser.get("lastName"),
+            Guide g = new Guide(entry.getKey(), (String) singleUser.get("name"), (String) singleUser.get("lastName"),
                     (String) singleUser.get("email"), (Boolean) singleUser.get("senior"), d1, d2);
             guideslist.add(g);
             list.add((String) singleUser.get("name"));
