@@ -9,6 +9,7 @@
     tools:showIn="@layout/app_bar_main">
 
     <LinearLayout
+        android:id="@+id/mainRightHalf"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="30dp"
@@ -23,6 +24,7 @@
             android:orientation="vertical">
 
             <RelativeLayout
+                android:id="@+id/allGuidesContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true">
@@ -41,9 +43,10 @@
                     android:src="@drawable/guides" />
 
                 <TextView
+                    android:id="@+id/allGuidesTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/allGuidesButton"
+                    android:layout_below="@id/allGuidesButton"
                     android:text="All guides"
                     android:textAlignment="center"
                     android:textSize="22sp" />
@@ -64,12 +67,13 @@
                     android:adjustViewBounds="true"
                     android:background="#00FFFFFF"
                     android:scaleType="fitCenter"
+                    android:onClick="onMyGroupsClicked"
                     android:src="@drawable/divers" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/groupsButton"
+                    android:layout_below="@id/groupsButton"
                     android:text="My groups"
                     android:textAlignment="center"
                     android:textSize="22sp" />
@@ -98,9 +102,11 @@
                     android:adjustViewBounds="true"
                     android:background="#00ffffff"
                     android:scaleType="fitCenter"
+                    android:onClick="OnWaitingListClicked"
                     android:src="@drawable/waitinglist" />
 
                 <TextView
+                    android:id="@+id/waitingListTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/waitingListButton"
@@ -123,9 +129,11 @@
                     android:adjustViewBounds="true"
                     android:background="#00ffffff"
                     android:scaleType="fitCenter"
+                    android:onClick="onInventoryClicked"
                     android:src="@drawable/inventory" />
 
                 <TextView
+                    android:id="@+id/InventoryTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/InventoryButton"

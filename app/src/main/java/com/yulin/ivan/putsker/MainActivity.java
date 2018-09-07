@@ -1,18 +1,17 @@
 package com.yulin.ivan.putsker;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,7 +21,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -37,7 +40,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -121,6 +123,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    @SuppressLint("NewApi")
     private void initSeniority() {
         String userID = mUser.getUid();
         Map newPost = new HashMap();
@@ -130,7 +133,46 @@ public class MainActivity extends AppCompatActivity
 //        if (userID.equals("pgxULqnRotc8pFO1pQhznp40ZjE3")) //aaa user id
         if (Arrays.asList(seniors).contains(userID))
             newPost.put("seniority", "yes");
-        else newPost.put("seniority", "no");
+        else {
+            newPost.put("seniority", "no");
+            ImageButton groupsButton = findViewById(R.id.groupsButton);
+
+            ImageButton allGuidesButton = findViewById(R.id.allGuidesButton);
+            ImageButton waitingListButton = findViewById(R.id.waitingListButton);
+            ImageButton InventoryButton = findViewById(R.id.InventoryButton);
+
+            TextView allGuidesTitle = findViewById(R.id.allGuidesTitle);
+            TextView waitingListTitle = findViewById(R.id.waitingListTitle);
+            TextView InventoryTitle = findViewById(R.id.InventoryTitle);
+
+//            allGuidesButton.setClickable(false);
+//            allGuidesButton.setImageAlpha(51);
+//            allGuidesTitle.setAlpha(0.3f);
+//            waitingListButton.setClickable(false);
+//            waitingListButton.setImageAlpha(51);
+//            waitingListTitle.setAlpha(0.3f);
+//            InventoryButton.setClickable(false);
+//            InventoryButton.setImageAlpha(51);
+//            InventoryTitle.setAlpha(0.3f);
+
+            DisplayMetrics metrics = getResources().getDisplayMetrics();
+            int DeviceTotalWidth = metrics.widthPixels;
+            int DeviceTotalHeight = metrics.heightPixels;
+
+//            RelativeLayout RelativeLayoutImageCenter=(RelativeLayout)findViewById(R.id.temp);
+//            RelativeLayoutImageCenter.setPadding(0,0,0,DeviceTotalHeight/4);
+
+            LinearLayout RelativeLayouttemp3 = findViewById(R.id.mainRightHalf);
+            RelativeLayouttemp3.removeViewAt(1); //remove two right images
+
+            RelativeLayout RelativeLayouttemp4 = findViewById(R.id.allGuidesContainer);
+            RelativeLayouttemp4.removeAllViews(); //remove upper left image
+
+
+//            RelativeLayout RelativeLayoutImageCenterContainer = (RelativeLayout) findViewById(R.id.temp2);
+//            RelativeLayoutImageCenterContainer.setPadding(DeviceTotalWidth / 4, 0, 0, 0);
+
+        }
 
         Task<Void> temp = current_user_db.setValue(newPost);
         temp.addOnFailureListener(new OnFailureListener() {
@@ -273,5 +315,20 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, ListActivity.class);
         intent.putExtra("title", "מדריכים");
         startActivity(intent);
+    }
+
+    public void onMyGroupsClicked(View view) {
+        Toast.makeText(MainActivity.this, "my groups clicked.",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    public void OnWaitingListClicked(View view) {
+        Toast.makeText(MainActivity.this, "waiting list clicked.",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    public void onInventoryClicked(View view) {
+        Toast.makeText(MainActivity.this, "inventory clicked.",
+                Toast.LENGTH_SHORT).show();
     }
 }
