@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity
 //            mainIconsContainer.removeAllViews();
 
             FragmentManager fragmentManager = getFragmentManager();
-            Fragment fragment = CourseFragment.newInstance();
+            Fragment fragment = CourseFragment.newInstance(mUser.getDisplayName());
             fragmentManager.beginTransaction().replace(R.id.mainIconsContainer, fragment).commit();
         }
 
@@ -318,20 +318,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onMyGroupsClicked(View view) {
-        Toast.makeText(MainActivity.this, "my groups clicked.",
-                Toast.LENGTH_SHORT).show();
-        FragmentManager fragmentManager = getFragmentManager();
-        Fragment fragment = CourseFragment.newInstance();
-        fragmentManager.beginTransaction().add(R.id.mainIconsContainer, fragment).commit();
+//        Toast.makeText(MainActivity.this, "my groups clicked.",
+//                Toast.LENGTH_SHORT).show();
+//        FragmentManager fragmentManager = getFragmentManager();
+//        Fragment fragment = CourseFragment.newInstance();
+//        fragmentManager.beginTransaction().add(R.id.mainIconsContainer, fragment).commit();
     }
 
     public void OnWaitingListClicked(View view) {
-        Toast.makeText(MainActivity.this, "waiting list clicked.",
+        Toast.makeText(MainActivity.this, "todo - implement.",
                 Toast.LENGTH_SHORT).show();
     }
 
     public void onInventoryClicked(View view) {
-        Toast.makeText(MainActivity.this, "inventory clicked.",
+        Toast.makeText(MainActivity.this, "todo - implement.",
                 Toast.LENGTH_SHORT).show();
     }
 

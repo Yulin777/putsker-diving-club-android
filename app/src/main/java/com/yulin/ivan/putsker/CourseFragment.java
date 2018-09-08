@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.ListView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Map;
 
 
 /**
@@ -33,10 +35,9 @@ public class CourseFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     ArrayList<Course> courses;
     ListView listView;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    Map<String, Object> m;
+    Toolbar apptoolbar;
+    static String title;
 
     private OnFragmentInteractionListener mListener;
 
@@ -51,7 +52,8 @@ public class CourseFragment extends Fragment {
      * @return A new instance of fragment CourseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CourseFragment newInstance() {
+    public static CourseFragment newInstance(String userName) {
+        title = userName;
         CourseFragment fragment = new CourseFragment();
         Bundle args = new Bundle();
 //        args.putString(ARG_PARAM1, param1);
@@ -63,19 +65,11 @@ public class CourseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-//        Intent intent = new Intent(getActivity(), CoursesActivity.class);
-//        startActivity(intent);
-
         return inflater.inflate(R.layout.fragment_course, container, false);
     }
 
@@ -120,6 +114,8 @@ public class CourseFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+
+        initToolbar();
         courses = new ArrayList<Course>();
 
         String[] course_names = getResources().getStringArray(R.array.courses_names);
@@ -153,15 +149,21 @@ public class CourseFragment extends Fragment {
                         break;
                 }
 //                Object course = (Object) m.get(courseName);
-//                String nextTitle = title + " > " + c.getCourseName();
-//                intent.putExtra("title", nextTitle);
-//                intent.putExtra("isCourse", true);
-//                intent.putExtra("courseName", courseName);
+                String nextTitle = c.getCourseName();
+                intent.putExtra("title", nextTitle);
+                intent.putExtra("isCourse", true);
+                intent.putExtra("courseName", courseName);
 //                intent.putExtra("classes", (Serializable) course);
                 startActivity(intent);
 
             }
         });
+    }
 
+
+    private void initToolbar() {
+        apptoolbar = getView().findViewById(R.id.apptoolbar);
+        apptoolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
+        apptoolbar.setTitle(title);
     }
 }
