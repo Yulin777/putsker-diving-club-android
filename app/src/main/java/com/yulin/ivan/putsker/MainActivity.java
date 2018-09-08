@@ -1,6 +1,7 @@
 package com.yulin.ivan.putsker;
 
 import android.annotation.SuppressLint;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -45,7 +47,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, ActivityCompat.OnRequestPermissionsResultCallback {
+        implements NavigationView.OnNavigationItemSelectedListener, ActivityCompat.OnRequestPermissionsResultCallback, CourseFragment.OnFragmentInteractionListener {
     private final String[] seniors = new String[]{"pgxULqnRotc8pFO1pQhznp40ZjE3"};
     private static final int GET_ACCOUNTS_REQUEST_CODE = 1;
     private static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = 2;
@@ -135,6 +137,7 @@ public class MainActivity extends AppCompatActivity
             newPost.put("seniority", "yes");
         else {
             newPost.put("seniority", "no");
+            LinearLayout mainIconsContainer = findViewById(R.id.mainIconsContainer);
             ImageButton groupsButton = findViewById(R.id.groupsButton);
 
             ImageButton allGuidesButton = findViewById(R.id.allGuidesButton);
@@ -145,6 +148,7 @@ public class MainActivity extends AppCompatActivity
             TextView waitingListTitle = findViewById(R.id.waitingListTitle);
             TextView InventoryTitle = findViewById(R.id.InventoryTitle);
 
+            /*  note: below code makes all icon except `My Groups` 80% transparent  */
 //            allGuidesButton.setClickable(false);
 //            allGuidesButton.setImageAlpha(51);
 //            allGuidesTitle.setAlpha(0.3f);
@@ -155,23 +159,22 @@ public class MainActivity extends AppCompatActivity
 //            InventoryButton.setImageAlpha(51);
 //            InventoryTitle.setAlpha(0.3f);
 
-            DisplayMetrics metrics = getResources().getDisplayMetrics();
-            int DeviceTotalWidth = metrics.widthPixels;
-            int DeviceTotalHeight = metrics.heightPixels;
-
-//            RelativeLayout RelativeLayoutImageCenter=(RelativeLayout)findViewById(R.id.temp);
-//            RelativeLayoutImageCenter.setPadding(0,0,0,DeviceTotalHeight/4);
-
-            LinearLayout RelativeLayouttemp3 = findViewById(R.id.mainRightHalf);
-            RelativeLayouttemp3.removeViewAt(1); //remove two right images
-
-            RelativeLayout RelativeLayouttemp4 = findViewById(R.id.allGuidesContainer);
-            RelativeLayouttemp4.removeAllViews(); //remove upper left image
-
-
+            /*   note: below code removes all icons excpet `My Groups` and puts `My Groups` in the center   */
+//            DisplayMetrics metrics = getResources().getDisplayMetrics();
+//            int DeviceTotalWidth = metrics.widthPixels;
+//            int DeviceTotalHeight = metrics.heightPixels;
+//            LinearLayout RelativeLayouttemp3 = findViewById(R.id.mainIconsContainer);
+//            RelativeLayouttemp3.removeViewAt(1); //remove two right images
+//            RelativeLayout RelativeLayouttemp4 = findViewById(R.id.allGuidesContainer);
+//            RelativeLayouttemp4.removeAllViews(); //remove upper left image
 //            RelativeLayout RelativeLayoutImageCenterContainer = (RelativeLayout) findViewById(R.id.temp2);
 //            RelativeLayoutImageCenterContainer.setPadding(DeviceTotalWidth / 4, 0, 0, 0);
 
+//            mainIconsContainer.removeAllViews();
+
+            FragmentManager fragmentManager = getFragmentManager();
+            Fragment fragment = CourseFragment.newInstance();
+            fragmentManager.beginTransaction().replace(R.id.mainIconsContainer, fragment).commit();
         }
 
         Task<Void> temp = current_user_db.setValue(newPost);
@@ -232,15 +235,15 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
-
+            //todo implement
         } else if (id == R.id.nav_slideshow) {
-
+            //todo implement
         } else if (id == R.id.nav_profile) {
             profileSettings();
         } else if (id == R.id.nav_share) {
-
+            //todo implement
         } else if (id == R.id.nav_send) {
-
+            //todo implement
         } else if (id == R.id.nav_logout) {
             signOut();
         }
@@ -281,7 +284,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     private void setProfileImageFromFirebase() {
 
         StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
@@ -306,8 +308,6 @@ public class MainActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, String permissions[],
                                            int[] grantResults) {
         //todo - permissions is an async function. app crashes when asking for permission in the first time
-
-
     }
 
 
@@ -320,6 +320,9 @@ public class MainActivity extends AppCompatActivity
     public void onMyGroupsClicked(View view) {
         Toast.makeText(MainActivity.this, "my groups clicked.",
                 Toast.LENGTH_SHORT).show();
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment fragment = CourseFragment.newInstance();
+        fragmentManager.beginTransaction().add(R.id.mainIconsContainer, fragment).commit();
     }
 
     public void OnWaitingListClicked(View view) {
@@ -330,5 +333,10 @@ public class MainActivity extends AppCompatActivity
     public void onInventoryClicked(View view) {
         Toast.makeText(MainActivity.this, "inventory clicked.",
                 Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        System.out.println("something to debug");
     }
 }

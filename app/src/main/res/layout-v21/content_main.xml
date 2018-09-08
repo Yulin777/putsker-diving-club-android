@@ -9,11 +9,9 @@
     tools:showIn="@layout/app_bar_main">
 
     <LinearLayout
-        android:id="@+id/mainRightHalf"
+        android:id="@+id/mainIconsContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="30dp"
-        android:layout_marginTop="20dp"
         android:orientation="horizontal"
         android:weightSum="2">
 
@@ -66,8 +64,8 @@
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
                     android:background="#00FFFFFF"
-                    android:scaleType="fitCenter"
                     android:onClick="onMyGroupsClicked"
+                    android:scaleType="fitCenter"
                     android:src="@drawable/divers" />
 
                 <TextView
@@ -101,8 +99,8 @@
                     android:layout_margin="10dp"
                     android:adjustViewBounds="true"
                     android:background="#00ffffff"
-                    android:scaleType="fitCenter"
                     android:onClick="OnWaitingListClicked"
+                    android:scaleType="fitCenter"
                     android:src="@drawable/waitinglist" />
 
                 <TextView
@@ -128,8 +126,8 @@
                     android:layout_margin="10dp"
                     android:adjustViewBounds="true"
                     android:background="#00ffffff"
-                    android:scaleType="fitCenter"
                     android:onClick="onInventoryClicked"
+                    android:scaleType="fitCenter"
                     android:src="@drawable/inventory" />
 
                 <TextView
