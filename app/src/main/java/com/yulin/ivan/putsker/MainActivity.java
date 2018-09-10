@@ -330,7 +330,7 @@ public class MainActivity extends AppCompatActivity
     public void onMyGroupsClicked(View view) {
         FragmentManager fragmentManager = getFragmentManager();
         Fragment fragment = CoursesFragment.newInstance(mUser.getDisplayName());
-        fragmentManager.beginTransaction().replace(R.id.mainIconsContainer, fragment).addToBackStack( "tag" ).commit();
+        fragmentManager.beginTransaction().replace(R.id.mainIconsContainer, fragment).addToBackStack("tag").commit();
     }
 
     public void OnWaitingListClicked(View view) {
@@ -345,6 +345,5 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-        System.out.println("something to debug");
     }
 }

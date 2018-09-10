@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -110,16 +111,17 @@ public class ListActivity extends android.app.ListActivity {
         final int position = getListView().getPositionForView((View) v.getParent());
         currentGuide = getGuideAt(position);
         LayoutInflater inflater = getLayoutInflater();
+
         guideModal = inflater.inflate(R.layout.guidepopup, null);
         TextView name = guideModal.findViewById(R.id.guideNameModal);
-//        TextView phone = guideModal.findViewById(R.id.studentPhoneModal);
-//        TextView gear = guideModal.findViewById(R.id.hasGearModal);
-//        guideImageModal = guideModal.findViewById(R.id.studentImageModal);
-//
+        TextView insurance = guideModal.findViewById(R.id.insuranceExpirationModal);
+        TextView license = guideModal.findViewById(R.id.licenseExpirationModal);
+
         name.setText(currentGuide.getFirstName() + " " + currentGuide.getLastName());
-//        phone.setText(currentGuide.getPhone());
-//        gear.setText((currentGuide.getHasGear() ? "Has " : "Does not have ") + "Gear");
-//        setStudentImageModal();
+        DateFormat dateFormat = new SimpleDateFormat("dd.mm.yyyy");
+
+        insurance.setText("insurance expiration\n" + dateFormat.format(currentGuide.insuranceExpiration));
+        license.setText("license expiraition\n" + dateFormat.format(currentGuide.licenseExpiration));
 
         new AlertDialog.Builder(this)
                 .setView(guideModal)
