@@ -45,7 +45,6 @@ public class ListActivity extends android.app.ListActivity {
     private FirebaseUser mUser;
     Toolbar apptoolbar;
     String title;
-
     Dialog dialog;
     ProgressDialog pg;
     View guideModal;
@@ -118,10 +117,8 @@ public class ListActivity extends android.app.ListActivity {
         TextView license = guideModal.findViewById(R.id.licenseExpirationModal);
 
         name.setText(currentGuide.getFirstName() + " " + currentGuide.getLastName());
-        DateFormat dateFormat = new SimpleDateFormat("dd.mm.yyyy");
-
-        insurance.setText("insurance expiration\n" + dateFormat.format(currentGuide.insuranceExpiration));
-        license.setText("license expiraition\n" + dateFormat.format(currentGuide.licenseExpiration));
+        insurance.setText("insurance expiration\n" + currentGuide.insuranceExpiration);
+        license.setText("license expiraition\n" + currentGuide.licenseExpiration);
 
         new AlertDialog.Builder(this)
                 .setView(guideModal)
@@ -157,16 +154,8 @@ public class ListActivity extends android.app.ListActivity {
 
             String s1 = (String) singleUser.get("licenseExpiration");
             String s2 = (String) singleUser.get("insuranceExpiration");
-            SimpleDateFormat format = new SimpleDateFormat("dd.MM.yy");
-            Date d1 = null, d2 = null;
-            try {
-                d1 = format.parse(s1);
-                d2 = format.parse(s2);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
             Guide g = new Guide(entry.getKey(), (String) singleUser.get("name"), (String) singleUser.get("lastName"),
-                    (String) singleUser.get("email"), (Boolean) singleUser.get("senior"), d1, d2);
+                    (String) singleUser.get("email"), (Boolean) singleUser.get("senior"), s2, s1);
             guideslist.add(g);
             list.add((String) singleUser.get("name"));
         }

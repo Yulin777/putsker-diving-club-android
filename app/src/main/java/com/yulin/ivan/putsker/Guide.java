@@ -12,14 +12,14 @@ public class Guide {
     String lastName;
     String email;
     boolean senior;
-    Date insuranceExpiration;
-    Date licenseExpiration;
+    String insuranceExpiration;
+    String licenseExpiration;
 
     public Guide() {
 
     }
 
-    public Guide(String uid, String firstName, String lastName, String email, boolean senior, Date insuranceExpiration, Date licenseExpiration) {
+    public Guide(String uid, String firstName, String lastName, String email, boolean senior, String insuranceExpiration, String licenseExpiration) {
         this.uid = uid;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -69,20 +69,20 @@ public class Guide {
         this.senior = senior;
     }
 
-    public Date getInsuranceExpiration() {
-        return insuranceExpiration;
-    }
-
-    public void setInsuranceExpiration(Date insuranceExpiration) {
-        this.insuranceExpiration = insuranceExpiration;
-    }
-
-    public Date getLicenseExpiration() {
-        return licenseExpiration;
-    }
-
-    public void setLicenseExpiration(Date licenseExpiration) {
-        this.licenseExpiration = licenseExpiration;
-    }
+//    public Date getInsuranceExpiration() {
+//        return insuranceExpiration;
+//    }
+//
+//    public void setInsuranceExpiration(Date insuranceExpiration) {
+//        this.insuranceExpiration = insuranceExpiration;
+//    }
+//
+//    public Date getLicenseExpiration() {
+//        return licenseExpiration;
+//    }
+//
+//    public void setLicenseExpiration(Date licenseExpiration) {
+//        this.licenseExpiration = licenseExpiration;
+//    }
 }
 
