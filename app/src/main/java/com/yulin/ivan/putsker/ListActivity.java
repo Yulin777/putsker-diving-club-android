@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,8 +37,8 @@ public class ListActivity extends android.app.ListActivity {
     DatabaseReference ref;
     ArrayList<String> list;
     ArrayList<Guide> guideslist;
-    Object o;
-    Map<String, Object> m;
+    Object selectedGuide;
+    Map<String, Object> guidesMap;
     ArrayAdapter<String> adapter;
     Guide guide;
     private FirebaseUser mUser;
@@ -74,10 +73,10 @@ public class ListActivity extends android.app.ListActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(ListActivity.this, CoursesActivity.class);
-                o = (Object) m.values().toArray()[position];
-                Map<String, Object> guide = (Map<String, Object>) o;
+                selectedGuide = (Object) guidesMap.values().toArray()[position];
+                Map<String, Object> guide = (Map<String, Object>) selectedGuide;
                 String nextTitle = title + " > " + ((String) guide.get("name"));
-                intent.putExtra("data", (Serializable) o);
+                intent.putExtra("data", (Serializable) selectedGuide);
                 intent.putExtra("title", nextTitle);
 
                 startActivity(intent);
@@ -89,8 +88,8 @@ public class ListActivity extends android.app.ListActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         //Get map of users in datasnapshot
-                        m = (Map<String, Object>) dataSnapshot.getValue();
-                        collectGuidesData(m);
+                        guidesMap = (Map<String, Object>) dataSnapshot.getValue();
+                        collectGuidesData(guidesMap);
                         adapter.notifyDataSetChanged();
 
                     }

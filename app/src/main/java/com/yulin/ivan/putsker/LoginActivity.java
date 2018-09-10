@@ -39,8 +39,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -271,10 +274,27 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 
     private void loadMainView(FirebaseUser user) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("userName", user.getDisplayName());
-        intent.putExtra("userEmail", user.getEmail());
-        startActivity(intent);
+
+        String userID = mUser.getUid();
+        DatabaseReference seniority = FirebaseDatabase.getInstance().getReference().child("Guides").child(userID).child("senior");
+
+        seniority.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot seniority) {
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                if (seniority.getValue().equals(false)) {
+                    intent.putExtra("senior", false);
+                } else{
+                    intent.putExtra("senior", true);
+                }
+                startActivity(intent);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                /* nothing */
+            }
+        });
     }
 
     private boolean isEmailValid(String email) {

@@ -18,7 +18,7 @@ public class CoursesActivity extends AppCompatActivity implements Serializable{
     ListView listView;
     ArrayList<String> list;
     ArrayList<Course> courses;
-    Map<String, Object> m;
+    Map<String, Object> selectedGuide;
     Toolbar apptoolbar;
     String title;
 
@@ -27,7 +27,7 @@ public class CoursesActivity extends AppCompatActivity implements Serializable{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_courses);
 
-        m = (Map<String, Object>)getIntent().getSerializableExtra("data");
+        selectedGuide = (Map<String, Object>)getIntent().getSerializableExtra("data");
         courses = new ArrayList<Course>();
         title = getIntent().getExtras().getString("title");
         initToolbar();
@@ -62,7 +62,7 @@ public class CoursesActivity extends AppCompatActivity implements Serializable{
                         courseName = "nitrox";
                         break;
                 }
-                Object course = (Object) m.get(courseName);
+                Object course = (Object) selectedGuide.get(courseName);
                 String nextTitle = title + " > " + c.getCourseName();
                 intent.putExtra("title", nextTitle);
                 intent.putExtra("isCourse", true);

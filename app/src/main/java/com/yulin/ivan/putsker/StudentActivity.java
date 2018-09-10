@@ -112,7 +112,7 @@ public class StudentActivity extends ListActivity {
         });
     }
 //
-//    public void showStudentModal(Student o) {
+//    public void showStudentModal(Student selectedGuide) {
 //        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 //
 //        TextView name = studentModal.findViewById(R.id.studentNameModal);
@@ -120,9 +120,9 @@ public class StudentActivity extends ListActivity {
 //        TextView gear = studentModal.findViewById(R.id.hasGearModal);
 //
 //        builder.setView(studentModal);
-//        name.setText(o.getName());
-//        phone.setText(o.getPhone());
-//        gear.setText((o.getHasGear() ? "Has " : "Does not have ") + "Gear");
+//        name.setText(selectedGuide.getName());
+//        phone.setText(selectedGuide.getPhone());
+//        gear.setText((selectedGuide.getHasGear() ? "Has " : "Does not have ") + "Gear");
 //
 //        builder.create().show();
 //    }

@@ -6,14 +6,15 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -26,7 +27,6 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,8 +37,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -47,8 +50,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, ActivityCompat.OnRequestPermissionsResultCallback, CourseFragment.OnFragmentInteractionListener {
-    private final String[] seniors = new String[]{"pgxULqnRotc8pFO1pQhznp40ZjE3"};
+        implements NavigationView.OnNavigationItemSelectedListener, ActivityCompat.OnRequestPermissionsResultCallback, CoursesFragment.OnFragmentInteractionListener {
+    //    private final String[] seniors = new String[]{"pgxULqnRotc8pFO1pQhznp40ZjE3"};
     private static final int GET_ACCOUNTS_REQUEST_CODE = 1;
     private static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = 2;
     private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 3;
@@ -61,7 +64,9 @@ public class MainActivity extends AppCompatActivity
     ImageView profileImage;
     NavigationView mNavigationView;
     ProgressDialog pg;
+    boolean isUserSenior;
 
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,15 +74,19 @@ public class MainActivity extends AppCompatActivity
         initialize();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
     private void initialize() {
         toolbar = findViewById(R.id.toolbar);
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
+        isUserSenior = getIntent().getExtras().getBoolean("senior");
         initFab();
         initDrawer();
         initProfileImage();
         initUsername();
-        initSeniority();
+        if (!isUserSenior) {
+            findViewById(R.id.groupsButton).callOnClick();
+        }
     }
 
     private void initUsername() {
@@ -126,29 +135,33 @@ public class MainActivity extends AppCompatActivity
     }
 
     @SuppressLint("NewApi")
+    /**
+     * method is not used because addListenerForSingleValueEvent is async and may cause a bug if a
+     * user presses any icon fast enough (before the async function is executed)
+     *
+     * instead, this check is made in login page and a boolean value is passed to this activity.
+     * this causes a delay in the login page but no crashes
+     */
     private void initSeniority() {
         String userID = mUser.getUid();
-        Map newPost = new HashMap();
-        DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child(userID);
+        DatabaseReference seniority = FirebaseDatabase.getInstance().getReference().child("Guides").child(userID).child("senior");
 
-        //todo string array of chosen uids
-//        if (userID.equals("pgxULqnRotc8pFO1pQhznp40ZjE3")) //aaa user id
-        if (Arrays.asList(seniors).contains(userID))
-            newPost.put("seniority", "yes");
-        else {
-            newPost.put("seniority", "no");
-            LinearLayout mainIconsContainer = findViewById(R.id.mainIconsContainer);
-            ImageButton groupsButton = findViewById(R.id.groupsButton);
+        seniority.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot seniority) {
+                if (seniority.getValue().equals(false)) {
+                    findViewById(R.id.groupsButton).callOnClick();
+                }
+            }
 
-            ImageButton allGuidesButton = findViewById(R.id.allGuidesButton);
-            ImageButton waitingListButton = findViewById(R.id.waitingListButton);
-            ImageButton InventoryButton = findViewById(R.id.InventoryButton);
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                /* nothing */
+            }
+        });
 
-            TextView allGuidesTitle = findViewById(R.id.allGuidesTitle);
-            TextView waitingListTitle = findViewById(R.id.waitingListTitle);
-            TextView InventoryTitle = findViewById(R.id.InventoryTitle);
 
-            /*  note: below code makes all icon except `My Groups` 80% transparent  */
+        /*  note: below code makes all icon except `My Groups` 80% transparent  */
 //            allGuidesButton.setClickable(false);
 //            allGuidesButton.setImageAlpha(51);
 //            allGuidesTitle.setAlpha(0.3f);
@@ -159,7 +172,7 @@ public class MainActivity extends AppCompatActivity
 //            InventoryButton.setImageAlpha(51);
 //            InventoryTitle.setAlpha(0.3f);
 
-            /*   note: below code removes all icons excpet `My Groups` and puts `My Groups` in the center   */
+        /*   note: below code removes all icons excpet `My Groups` and puts `My Groups` in the center   */
 //            DisplayMetrics metrics = getResources().getDisplayMetrics();
 //            int DeviceTotalWidth = metrics.widthPixels;
 //            int DeviceTotalHeight = metrics.heightPixels;
@@ -172,24 +185,21 @@ public class MainActivity extends AppCompatActivity
 
 //            mainIconsContainer.removeAllViews();
 
-            FragmentManager fragmentManager = getFragmentManager();
-            Fragment fragment = CourseFragment.newInstance(mUser.getDisplayName());
-            fragmentManager.beginTransaction().replace(R.id.mainIconsContainer, fragment).commit();
-        }
+//        }
 
-        Task<Void> temp = current_user_db.setValue(newPost);
-        temp.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-//                Toast.makeText(getApplicationContext(), "Upload failed", Toast.LENGTH_SHORT).show();
-            }
-        });
-        temp.addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-//                Toast.makeText(getApplicationContext(), "Uploaded successfully", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        Task<Void> temp = seniority.setValue(newPost);
+//        temp.addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception exception) {
+////                Toast.makeText(getApplicationContext(), "Upload failed", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        temp.addOnSuccessListener(new OnSuccessListener<Void>() {
+//            @Override
+//            public void onSuccess(Void aVoid) {
+////                Toast.makeText(getApplicationContext(), "Uploaded successfully", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
     }
 
@@ -318,11 +328,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onMyGroupsClicked(View view) {
-//        Toast.makeText(MainActivity.this, "my groups clicked.",
-//                Toast.LENGTH_SHORT).show();
-//        FragmentManager fragmentManager = getFragmentManager();
-//        Fragment fragment = CourseFragment.newInstance();
-//        fragmentManager.beginTransaction().add(R.id.mainIconsContainer, fragment).commit();
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment fragment = CoursesFragment.newInstance(mUser.getDisplayName());
+        fragmentManager.beginTransaction().replace(R.id.mainIconsContainer, fragment).commit();
     }
 
     public void OnWaitingListClicked(View view) {

@@ -15,6 +15,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
@@ -23,12 +31,12 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CourseFragment.OnFragmentInteractionListener} interface
+ * {@link CoursesFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link CourseFragment#newInstance} factory method to
+ * Use the {@link CoursesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CourseFragment extends Fragment {
+public class CoursesFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -37,11 +45,16 @@ public class CourseFragment extends Fragment {
     ListView listView;
     Map<String, Object> m;
     Toolbar apptoolbar;
-    static String title;
+    static Object o;
+    FirebaseDatabase db;
+    DatabaseReference ref;
+    Map<String, Object> guidesMap;
 
+    FirebaseAuth mAuth;
+    FirebaseUser mUser;
     private OnFragmentInteractionListener mListener;
 
-    public CourseFragment() {
+    public CoursesFragment() {
         // Required empty public constructor
     }
 
@@ -49,15 +62,12 @@ public class CourseFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment CourseFragment.
+     * @return A new instance of fragment CoursesFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CourseFragment newInstance(String userName) {
-        title = userName;
-        CourseFragment fragment = new CourseFragment();
+    public static CoursesFragment newInstance(String userName) {
+        CoursesFragment fragment = new CoursesFragment();
         Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,6 +75,8 @@ public class CourseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
     }
 
     @Override
@@ -117,6 +129,21 @@ public class CourseFragment extends Fragment {
 
         initToolbar();
         courses = new ArrayList<Course>();
+        db = FirebaseDatabase.getInstance();
+        ref = db.getReference().child("Guides");
+        ref.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        //Get map of users in datasnapshot
+                        guidesMap = (Map<String, Object>) dataSnapshot.getValue();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //handle databaseError
+                    }
+                });
 
         String[] course_names = getResources().getStringArray(R.array.courses_names);
         TypedArray course_pics = getResources().obtainTypedArray(R.array.courses_pics);
@@ -134,8 +161,8 @@ public class CourseFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), ClassActivity.class);
                 Course c = (Course) listView.getItemAtPosition(position);
+
                 String courseName = "";
                 switch (c.getCourseName()) {
                     case "כוכב 1":
@@ -148,22 +175,37 @@ public class CourseFragment extends Fragment {
                         courseName = "nitrox";
                         break;
                 }
-//                Object course = (Object) m.get(courseName);
+                Intent intent = new Intent(getActivity(), ClassActivity.class);
+                Map<String, Object> selectedGuide = getCurrentGuide();
+                Object course = (Object) selectedGuide.get(courseName);
                 String nextTitle = c.getCourseName();
                 intent.putExtra("title", nextTitle);
                 intent.putExtra("isCourse", true);
                 intent.putExtra("courseName", courseName);
-//                intent.putExtra("classes", (Serializable) course);
+                intent.putExtra("classes", (Serializable) course);
                 startActivity(intent);
 
             }
         });
     }
 
+    private Map<String, Object> getCurrentGuide() {
+        String uid = mUser.getUid();
+        int position = -1;
+
+        for (String key : guidesMap.keySet()) {
+            position++;
+            if (key.equals(uid)) {
+                break;
+            }
+        }
+        return (Map<String, Object>) guidesMap.values().toArray()[position];
+    }
+
 
     private void initToolbar() {
         apptoolbar = getView().findViewById(R.id.apptoolbar);
         apptoolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
-        apptoolbar.setTitle(title);
+        apptoolbar.setTitle(mUser.getDisplayName());
     }
 }
