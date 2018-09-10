@@ -330,7 +330,7 @@ public class MainActivity extends AppCompatActivity
     public void onMyGroupsClicked(View view) {
         FragmentManager fragmentManager = getFragmentManager();
         Fragment fragment = CoursesFragment.newInstance(mUser.getDisplayName());
-        fragmentManager.beginTransaction().replace(R.id.mainIconsContainer, fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.mainIconsContainer, fragment).addToBackStack( "tag" ).commit();
     }
 
     public void OnWaitingListClicked(View view) {
