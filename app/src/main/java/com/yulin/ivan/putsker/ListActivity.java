@@ -6,7 +6,9 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 public class ListActivity extends android.app.ListActivity {
 
@@ -42,28 +45,24 @@ public class ListActivity extends android.app.ListActivity {
     Map<String, Object> guidesMap;
     ArrayAdapter<String> adapter;
     Guide guide;
-    private FirebaseUser mUser;
     Toolbar apptoolbar;
     String title;
-    Dialog dialog;
-    ProgressDialog pg;
     View guideModal;
-    ImageView guideImageModal;
     Guide currentGuide;
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
-        title = getIntent().getExtras().getString("title");
+
+        title = Objects.requireNonNull(getIntent().getExtras()).getString("title");
         initToolbar();
 
         guide = new Guide();
         listView = (ListView) findViewById(android.R.id.list);
         db = FirebaseDatabase.getInstance();
         ref = db.getReference().child("Guides");
-        //todo set write permissions for Guides
-
         list = new ArrayList<>();
         guideslist = new ArrayList<>();
         adapter = new ArrayAdapter<String>(this, R.layout.guides, R.id.guideName, list);
@@ -117,8 +116,8 @@ public class ListActivity extends android.app.ListActivity {
         TextView license = guideModal.findViewById(R.id.licenseExpirationModal);
 
         name.setText(currentGuide.name);
-        insurance.setText("insurance expiration\n" + currentGuide.insuranceExpiration);
-        license.setText("license expiraition\n" + currentGuide.licenseExpiration);
+        insurance.setText(String.format("insurance expiration\n%s", currentGuide.insuranceExpiration));
+        license.setText(String.format("license expiraition\n%s", currentGuide.licenseExpiration));
 
         new AlertDialog.Builder(this)
                 .setView(guideModal)
