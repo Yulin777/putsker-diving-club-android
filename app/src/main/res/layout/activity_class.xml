@@ -10,7 +10,7 @@
 
     <ListView
         android:layout_marginTop="?android:attr/actionBarSize"
-        android:id="@+id/classesList"
+        android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

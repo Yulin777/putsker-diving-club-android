@@ -21,11 +21,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -87,16 +84,6 @@ public class StudentActivity extends ListActivity {
 
         studentsList = (ListView) findViewById(android.R.id.list);
         setListAdapter(new CustomStudentAdapter(this, students));
-//        CustomStudentAdapter adapter = new CustomStudentAdapter(this, students);
-//        studentsList.setAdapter(adapter);
-//        studentsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Student clickedStudent = (Student) parent.getAdapter().getItem(position);
-//                showStudentModal(clickedStudent);
-//            }
-//        });
-
     }
 
     private void initToolbar() {
@@ -111,21 +98,6 @@ public class StudentActivity extends ListActivity {
             }
         });
     }
-//
-//    public void showStudentModal(Student selectedGuide) {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//
-//        TextView name = studentModal.findViewById(R.id.studentNameModal);
-//        TextView phone = studentModal.findViewById(R.id.studentPhoneModal);
-//        TextView gear = studentModal.findViewById(R.id.hasGearModal);
-//
-//        builder.setView(studentModal);
-//        name.setText(selectedGuide.getName());
-//        phone.setText(selectedGuide.getPhone());
-//        gear.setText((selectedGuide.getHasGear() ? "Has " : "Does not have ") + "Gear");
-//
-//        builder.create().show();
-//    }
 
     public void showStudentModal(View v) {
         final int position = getListView().getPositionForView((View) v.getParent());
@@ -362,7 +334,7 @@ public class StudentActivity extends ListActivity {
             LayoutInflater mInflater = (LayoutInflater) context
                     .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.sudents, null);
+                convertView = mInflater.inflate(R.layout.students, null);
                 holder = new CustomStudentAdapter.ViewHolder();
 
                 holder.student_name = (TextView) convertView.findViewById(R.id.studentNameList);
