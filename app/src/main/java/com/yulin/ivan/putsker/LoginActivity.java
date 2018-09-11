@@ -1,6 +1,5 @@
 package com.yulin.ivan.putsker;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -17,8 +16,6 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -33,26 +30,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -89,7 +77,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mLoginFormView;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
-    private StorageReference mStorageRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +87,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mUser = mAuth.getCurrentUser();
         if (mUser != null)
             loadMainView(mUser);
-        mStorageRef = FirebaseStorage.getInstance().getReference();
 
         setContentView(R.layout.activity_login);
         // Set up the login form.
@@ -273,29 +259,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
 
-
     private void loadMainView(FirebaseUser user) {
         DatabaseReference user_db = FirebaseDatabase.getInstance().getReference().child("Guides").child(user.getUid());
-        DatabaseReference seniority = user_db.child("senior");
         syncGuideInfo(user_db, user);
-
-        seniority.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot seniority) {
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                if (seniority.getValue().equals(false)) {
-                    intent.putExtra("senior", false);
-                } else{
-                    intent.putExtra("senior", true);
-                }
-                startActivity(intent);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                /* nothing */
-            }
-        });
+        startActivity(new Intent(LoginActivity.this, FromLoginToMainAnimationActivity.class));
     }
 
     private void syncGuideInfo(DatabaseReference user_db, FirebaseUser user) {
@@ -396,7 +363,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         startActivity(new Intent(LoginActivity.this, PasswordReset.class));
     }
 
-
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -462,6 +428,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
         }
+
     }
+
 }
 
