@@ -116,7 +116,7 @@ public class ListActivity extends android.app.ListActivity {
         TextView insurance = guideModal.findViewById(R.id.insuranceExpirationModal);
         TextView license = guideModal.findViewById(R.id.licenseExpirationModal);
 
-        name.setText(currentGuide.getFirstName() + " " + currentGuide.getLastName());
+        name.setText(currentGuide.name);
         insurance.setText("insurance expiration\n" + currentGuide.insuranceExpiration);
         license.setText("license expiraition\n" + currentGuide.licenseExpiration);
 
@@ -154,7 +154,7 @@ public class ListActivity extends android.app.ListActivity {
 
             String s1 = (String) singleUser.get("licenseExpiration");
             String s2 = (String) singleUser.get("insuranceExpiration");
-            Guide g = new Guide(entry.getKey(), (String) singleUser.get("name"), (String) singleUser.get("lastName"),
+            Guide g = new Guide(entry.getKey(), (String) singleUser.get("name"),
                     (String) singleUser.get("email"), (Boolean) singleUser.get("senior"), s2, s1);
             guideslist.add(g);
             list.add((String) singleUser.get("name"));

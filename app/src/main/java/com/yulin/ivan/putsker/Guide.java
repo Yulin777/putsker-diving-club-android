@@ -8,8 +8,7 @@ import java.util.Date;
 
 public class Guide {
     String uid;
-    String firstName;
-    String lastName;
+    String name;
     String email;
     boolean senior;
     String insuranceExpiration;
@@ -19,10 +18,9 @@ public class Guide {
 
     }
 
-    public Guide(String uid, String firstName, String lastName, String email, boolean senior, String insuranceExpiration, String licenseExpiration) {
+    public Guide(String uid, String name, String email, boolean senior, String insuranceExpiration, String licenseExpiration) {
         this.uid = uid;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.name = name;
         this.email = email;
         this.senior = senior;
         this.insuranceExpiration = insuranceExpiration;
@@ -35,22 +33,6 @@ public class Guide {
 
     public void setUid(String uid) {
         this.uid = uid;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public String getEmail() {

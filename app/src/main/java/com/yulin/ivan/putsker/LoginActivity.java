@@ -39,6 +39,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -274,9 +275,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 
     private void loadMainView(FirebaseUser user) {
-
-        String userID = mUser.getUid();
-        DatabaseReference seniority = FirebaseDatabase.getInstance().getReference().child("Guides").child(userID).child("senior");
+        DatabaseReference user_db = FirebaseDatabase.getInstance().getReference().child("Guides").child(user.getUid());
+        DatabaseReference seniority = user_db.child("senior");
+        syncGuideInfo(user_db, user);
 
         seniority.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -297,6 +298,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
     }
 
+    private void syncGuideInfo(DatabaseReference user_db, FirebaseUser user) {
+        user_db.child("email").setValue(user.getEmail());
+        user_db.child("name").setValue(user.getDisplayName());
+    }
+
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.contains("@");
@@ -304,8 +310,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-//        return password.length() > 4;
-        return true;
+        return password.length() > 4;
     }
 
     /**
