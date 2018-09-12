@@ -51,7 +51,7 @@ public class FromLoginToMainAnimationActivity extends Activity {
                         @Override
                         public void run() {
                             TextView title = findViewById(R.id.gifTitle);
-                            title.setText("Bringing it up to surface!");
+                            title.setText("Got it!\nComing up to surface");
                         }
                     });
                     sleep(1000);
