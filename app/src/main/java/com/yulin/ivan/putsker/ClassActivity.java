@@ -4,8 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +20,12 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.flags.impl.DataUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -121,6 +128,83 @@ public class ClassActivity extends ListActivity implements Serializable {
         });
     }
 
+    public void sendGroupMessage(View v){
+        ArrayList<Object> clickedGroup = new ArrayList<>();
+        clickedGroup = (ArrayList<Object>)groups.get((Integer) v.getTag());
+        ArrayList<String> clickedGroupNames = getClickedGroupNames(clickedGroup);
+        String namesToSingleString = joinNames(clickedGroupNames);
+        ArrayList<String> clickedGroupPhones = getClickedGroupPhones(clickedGroup);
+        final String phonesToSingleString = joinPhones(clickedGroupPhones);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Send Message to this group")
+                .setMessage("recipients:\n" + namesToSingleString)
+                .setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + phonesToSingleString));
+                        startActivity(intent);
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    private String joinPhones(ArrayList<String> clickedGroupPhones) {
+        StringBuilder listString = new StringBuilder();
+
+        for (String s : clickedGroupPhones)
+            listString.append(s).append(";");
+
+        return listString.toString();
+    }
+
+    private String joinNames(ArrayList<String> clickedGroupNames) {
+        StringBuilder listString = new StringBuilder();
+
+        for (String s : clickedGroupNames)
+            listString.append(s).append("\n");
+
+        return listString.toString();
+    }
+
+    private ArrayList<String> getClickedGroupPhones(ArrayList<Object> clickedGroup) {
+        boolean firstFlag = true;
+        ArrayList<String> temp = new ArrayList<String>();
+        for (Object student : clickedGroup) {
+            if (firstFlag){
+                firstFlag = false;
+                continue;
+            }
+            temp.add(((HashMap) student).values().toArray()[1].toString());
+        }
+        return temp;
+    }
+
+    private ArrayList<String> getClickedGroupNames(ArrayList<Object> clickedGroup) {
+        boolean firstFlag = true;
+        ArrayList<String> temp = new ArrayList<String>();
+        for (Object student : clickedGroup) {
+            if (firstFlag){
+                firstFlag = false;
+                continue;
+            }
+            temp.add(((HashMap) student).values().toArray()[0].toString());
+        }
+        return temp;
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+    }
+
 
     public class CustomClassAdapter extends BaseAdapter {
 
@@ -168,6 +252,7 @@ public class ClassActivity extends ListActivity implements Serializable {
                 if (rowItems.get(position + 1) != null) {
                     holder.group_name.setText((String) ((ArrayList) rowItems.get(position + 1)).get(0));
                     holder.messageIcon.setVisibility(View.VISIBLE);
+                    holder.messageIcon.setTag(position+1);
                 }
                 convertView.setTag(holder);
             } else {
