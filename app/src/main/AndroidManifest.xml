@@ -37,10 +37,7 @@
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".FromLoginToMainAnimationActivity"
-            android:label=""
-            android:theme="@android:style/Theme.Dialog" />
+        <activity android:name=".FromLoginToMainAnimationActivity" />
         <activity android:name=".PasswordReset" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".ChangePasswordActivity" />
