@@ -1,11 +1,5 @@
 package com.yulin.ivan.putsker;
 
-import java.util.Date;
-
-/**
- * Created by tyizchak on 8/1/2018.
- */
-
 public class Guide {
     String uid;
     String name;
