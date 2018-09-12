@@ -6,12 +6,21 @@
     android:layout_height="match_parent"
     tools:context="com.yulin.ivan.putsker.ClassActivity">
 
-    <include layout="@layout/toolbar" android:id="@+id/apptoolbar"/>
+    <include
+        android:id="@+id/apptoolbar"
+        layout="@layout/toolbar" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.2"
+        android:scaleType="centerCrop"
+        android:src="@drawable/app_background" />
 
     <ListView
-        android:layout_marginTop="?android:attr/actionBarSize"
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="?android:attr/actionBarSize" />
 
 </RelativeLayout>

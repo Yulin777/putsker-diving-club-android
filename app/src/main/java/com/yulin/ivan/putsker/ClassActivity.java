@@ -6,6 +6,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -18,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.flags.impl.DataUtils;
@@ -128,9 +130,9 @@ public class ClassActivity extends ListActivity implements Serializable {
         });
     }
 
-    public void sendGroupMessage(View v){
+    public void sendGroupMessage(View v) {
         ArrayList<Object> clickedGroup = new ArrayList<>();
-        clickedGroup = (ArrayList<Object>)groups.get((Integer) v.getTag());
+        clickedGroup = (ArrayList<Object>) groups.get((Integer) v.getTag());
         ArrayList<String> clickedGroupNames = getClickedGroupNames(clickedGroup);
         String namesToSingleString = joinNames(clickedGroupNames);
         ArrayList<String> clickedGroupPhones = getClickedGroupPhones(clickedGroup);
@@ -178,7 +180,7 @@ public class ClassActivity extends ListActivity implements Serializable {
         boolean firstFlag = true;
         ArrayList<String> temp = new ArrayList<String>();
         for (Object student : clickedGroup) {
-            if (firstFlag){
+            if (firstFlag) {
                 firstFlag = false;
                 continue;
             }
@@ -191,7 +193,7 @@ public class ClassActivity extends ListActivity implements Serializable {
         boolean firstFlag = true;
         ArrayList<String> temp = new ArrayList<String>();
         for (Object student : clickedGroup) {
-            if (firstFlag){
+            if (firstFlag) {
                 firstFlag = false;
                 continue;
             }
@@ -201,7 +203,7 @@ public class ClassActivity extends ListActivity implements Serializable {
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         super.onBackPressed();
     }
 
@@ -252,7 +254,7 @@ public class ClassActivity extends ListActivity implements Serializable {
                 if (rowItems.get(position + 1) != null) {
                     holder.group_name.setText((String) ((ArrayList) rowItems.get(position + 1)).get(0));
                     holder.messageIcon.setVisibility(View.VISIBLE);
-                    holder.messageIcon.setTag(position+1);
+                    holder.messageIcon.setTag(position + 1);
                 }
                 convertView.setTag(holder);
             } else {
