@@ -19,6 +19,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -172,26 +173,37 @@ public class ClassActivity extends ListActivity implements Serializable {
 
     private ArrayList<String> getClickedGroupPhones(ArrayList<Object> clickedGroup) {
         boolean firstFlag = true;
+        int oneOrZero = 1;
         ArrayList<String> temp = new ArrayList<String>();
         for (Object student : clickedGroup) {
             if (firstFlag) {
                 firstFlag = false;
                 continue;
             }
-            temp.add(((HashMap) student).values().toArray()[1].toString());
+            String phoneOrName = ((HashMap) student).values().toArray()[1].toString().replaceAll("-", "");
+            if (phoneOrName.matches("[0-9]+") && phoneOrName.length() > 2) {
+                oneOrZero = 1;
+            } else oneOrZero = 0;
+            temp.add(((HashMap) student).values().toArray()[oneOrZero].toString().replaceAll("-", ""));
         }
         return temp;
     }
 
     private ArrayList<String> getClickedGroupNames(ArrayList<Object> clickedGroup) {
         boolean firstFlag = true;
+        int oneOrZero = 0;
         ArrayList<String> temp = new ArrayList<String>();
         for (Object student : clickedGroup) {
             if (firstFlag) {
                 firstFlag = false;
                 continue;
             }
-            temp.add(((HashMap) student).values().toArray()[0].toString());
+            String phoneOrName = ((HashMap) student).values().toArray()[1].toString().replaceAll("-", "");
+            if (phoneOrName.matches("[0-9]+") && phoneOrName.length() > 2) {
+                oneOrZero = 0;
+            } else oneOrZero = 1;
+
+            temp.add(((HashMap) student).values().toArray()[oneOrZero].toString());
         }
         return temp;
     }
