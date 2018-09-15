@@ -22,13 +22,12 @@
             android:orientation="vertical">
 
             <RelativeLayout
-                android:id="@+id/allGuidesContainer"
+                android:id="@+id/all_guides_container"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true">
+                android:layout_height="wrap_content">
 
                 <ImageButton
-                    android:id="@+id/allGuidesButton"
+                    android:id="@+id/all_guides_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
@@ -41,16 +40,17 @@
                     android:src="@drawable/guides" />
 
                 <TextView
-                    android:id="@+id/allGuidesTitle"
+                    android:id="@+id/all_guides_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/allGuidesButton"
+                    android:layout_below="@id/all_guides_button"
                     android:text="All guides"
                     android:textAlignment="center"
                     android:textSize="22sp" />
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/my_groups_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true">
@@ -83,16 +83,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:weightSum="2">
+            android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:id="@+id/waiting_list_container"
                 android:orientation="vertical">
 
                 <ImageButton
-                    android:id="@+id/waitingListButton"
+                    android:id="@+id/waiting_list_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -107,7 +107,7 @@
                     android:id="@+id/waitingListTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/waitingListButton"
+                    android:layout_below="@id/waiting_list_button"
                     android:text="Waiting list"
                     android:textAlignment="center"
                     android:textSize="22sp" />
@@ -116,10 +116,11 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/inventory_container"
                 android:layout_alignParentBottom="true">
 
                 <ImageButton
-                    android:id="@+id/InventoryButton"
+                    android:id="@+id/inventory_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -134,7 +135,7 @@
                     android:id="@+id/InventoryTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/InventoryButton"
+                    android:layout_below="@id/inventory_button"
                     android:text="Inventory"
                     android:textAlignment="center"
                     android:textSize="22sp" />

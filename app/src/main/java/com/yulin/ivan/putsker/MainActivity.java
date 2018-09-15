@@ -15,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -25,6 +26,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -73,6 +75,7 @@ public class MainActivity extends AppCompatActivity
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         isUserSenior = getIntent().getExtras().getBoolean("senior");
+        setIconsHeight();
         initFab();
         initDrawer();
         initProfileImage();
@@ -80,6 +83,15 @@ public class MainActivity extends AppCompatActivity
         if (!isUserSenior) {
             findViewById(R.id.groupsButton).callOnClick();
         }
+    }
+
+    private void setIconsHeight() {
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int DeviceTotalHeight = metrics.heightPixels;
+        (findViewById(R.id.all_guides_container)).setPadding(0, DeviceTotalHeight / 16, 0, 0);
+        (findViewById(R.id.waiting_list_container)).setPadding(0, DeviceTotalHeight / 16, 0, 0);
+        (findViewById(R.id.my_groups_container)).setPadding(0, 0, 0, DeviceTotalHeight / 16);
+        (findViewById(R.id.inventory_container)).setPadding(0, 0, 0, DeviceTotalHeight / 16);
     }
 
     private void initUsername() {
