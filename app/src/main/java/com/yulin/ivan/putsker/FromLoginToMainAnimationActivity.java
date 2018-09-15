@@ -11,6 +11,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,8 +34,13 @@ public class FromLoginToMainAnimationActivity extends Activity {
         setContentView(R.layout.activity_from_login_to_main_animation);
         busyindicator = findViewById(R.id.busyindicator);
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        FirebaseAuth mAuth;
+        FirebaseUser mUser;
 
-        DatabaseReference user_db = FirebaseDatabase.getInstance().getReference().child("Guides").child("pgxULqnRotc8pFO1pQhznp40ZjE3");
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+
+        DatabaseReference user_db = FirebaseDatabase.getInstance().getReference().child("Guides").child(mUser.getUid());
         DatabaseReference seniority = user_db.child("senior");
 
         Thread timer = new Thread() {
