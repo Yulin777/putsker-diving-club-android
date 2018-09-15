@@ -260,10 +260,12 @@ public class ClassActivity extends ListActivity implements Serializable {
 
                 holder.group_name = (TextView) convertView.findViewById(R.id.groupName);
                 holder.messageIcon = convertView.findViewById(R.id.messageinabottle);
-                if (rowItems.get(position + 1) != null) {
+                try {
                     holder.group_name.setText((String) ((ArrayList) rowItems.get(position + 1)).get(0));
                     holder.messageIcon.setVisibility(View.VISIBLE);
                     holder.messageIcon.setTag(position + 1);
+                } catch (Exception e) {
+                    /* note: sometimes app crashes at last index. perhaps when list is smaller then the screen could not figure out why :( */
                 }
                 convertView.setTag(holder);
             } else {
