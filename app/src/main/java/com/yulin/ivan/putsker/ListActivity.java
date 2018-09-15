@@ -21,6 +21,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -158,6 +159,7 @@ public class ListActivity extends android.app.ListActivity {
         name.setText(currentGuide.name);
         insurance.setText(String.format("insurance expiration\n%s", currentGuide.insuranceExpiration));
         license.setText(String.format("license expiraition\n%s", currentGuide.licenseExpiration));
+        setGuideImageModal((ImageView) guideModal.findViewById(R.id.guide_image_modal));
 
         new AlertDialog.Builder(this)
                 .setView(guideModal)
@@ -168,6 +170,26 @@ public class ListActivity extends android.app.ListActivity {
                     }
                 })
                 .create().show();
+    }
+
+    private void setGuideImageModal(final ImageView guideImageModal) {
+
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+
+        Task<Uri> profileImageUri = mStorageRef.child("users").child(currentGuide.uid).getDownloadUrl();
+        profileImageUri.addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Glide.with(ListActivity.this)
+                        .load(uri)
+                        .into(guideImageModal);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(ListActivity.this, "could not load profile image.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void initToolbar() {
