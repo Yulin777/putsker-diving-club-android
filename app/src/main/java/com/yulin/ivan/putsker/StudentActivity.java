@@ -353,7 +353,7 @@ public class StudentActivity extends ListActivity {
             holder.image = (ImageView) convertView.findViewById(R.id.student_image_list);
             Student currentStudent = (Student) getItem(position);
             String currentPhone = currentStudent.getPhone();
-            setStudentImage(holder.image, currentPhone);
+//            setStudentImage(holder.image, currentPhone);
 
             return convertView;
         }
