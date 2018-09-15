@@ -31,6 +31,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginBottom="20dp"
+                android:adjustViewBounds="true"
+                android:src="@mipmap/logo" />
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -77,12 +84,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Forgot Password?"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
                 android:onClick="forgotPassword"
                 android:paddingTop="20dp"
-                android:textColor="@color/teal"/>
+                android:text="Forgot Password?"
+                android:textColor="@color/teal" />
 
         </LinearLayout>
     </ScrollView>

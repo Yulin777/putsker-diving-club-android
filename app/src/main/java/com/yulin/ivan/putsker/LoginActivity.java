@@ -19,6 +19,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -26,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,7 +74,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
-    private View mLoginFormView;
+    private ScrollView mLoginFormView;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
 
@@ -89,10 +91,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView.setOnTouchListener(scrollDown);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
@@ -115,6 +120,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
 
     }
+
+    View.OnTouchListener scrollDown = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            View lastChild = mLoginFormView.getChildAt(mLoginFormView.getChildCount() - 1);
+            int bottom = lastChild.getBottom() + mLoginFormView.getPaddingBottom();
+            int sy = mLoginFormView.getScrollY();
+            int sh = mLoginFormView.getHeight();
+            int delta = bottom - (sy + sh);
+
+            mLoginFormView.smoothScrollBy(0, delta);
+            return false;
+        }
+    };
 
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
