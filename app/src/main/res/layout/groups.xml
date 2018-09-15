@@ -24,7 +24,7 @@
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:paddingStart="8dp"
-        android:id="@+id/groupName"
+        android:id="@+id/group_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -34,7 +34,7 @@
 
     <ImageButton
         android:padding="5dp"
-        android:id="@+id/messageinabottle"
+        android:id="@+id/message_in_a_bottle"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="@android:color/transparent"

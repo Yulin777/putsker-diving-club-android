@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 
 public class StudentActivity extends ListActivity {
-    ListView studentsList;
     ArrayList<Student> students;
     Map<String, Object> m;
     ArrayList<Object> arr;
@@ -82,7 +81,6 @@ public class StudentActivity extends ListActivity {
             students.add(item);
         }
 
-        studentsList = (ListView) findViewById(android.R.id.list);
         setListAdapter(new CustomStudentAdapter(this, students));
     }
 

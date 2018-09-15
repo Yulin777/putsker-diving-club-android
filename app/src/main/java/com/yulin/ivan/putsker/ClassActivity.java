@@ -46,7 +46,7 @@ public class ClassActivity extends ListActivity implements Serializable {
 
         listView = (ListView) findViewById(android.R.id.list);
         list = new ArrayList<>();
-        adapter = new ArrayAdapter<String>(this, R.layout.groups, R.id.groupName, list);
+        adapter = new ArrayAdapter<String>(this, R.layout.groups, R.id.group_name, list);
         listView.setAdapter(adapter);
 
         isCourse = getIntent().getExtras().getBoolean("isCourse");
@@ -258,8 +258,8 @@ public class ClassActivity extends ListActivity implements Serializable {
                 convertView = mInflater.inflate(R.layout.groups, null);
                 holder = new CustomClassAdapter.ViewHolder();
 
-                holder.group_name = (TextView) convertView.findViewById(R.id.groupName);
-                holder.messageIcon = convertView.findViewById(R.id.messageinabottle);
+                holder.group_name = (TextView) convertView.findViewById(R.id.group_name);
+                holder.messageIcon = convertView.findViewById(R.id.message_in_a_bottle);
                 try {
                     holder.group_name.setText((String) ((ArrayList) rowItems.get(position + 1)).get(0));
                     holder.messageIcon.setVisibility(View.VISIBLE);
@@ -271,7 +271,7 @@ public class ClassActivity extends ListActivity implements Serializable {
             } else {
                 holder = (CustomClassAdapter.ViewHolder) convertView.getTag();
             }
-            holder.messageIcon = convertView.findViewById(R.id.messageinabottle);
+            holder.messageIcon = convertView.findViewById(R.id.message_in_a_bottle);
 
             return convertView;
         }
