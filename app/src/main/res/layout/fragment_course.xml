@@ -5,12 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".CoursesFragment">
 
-    <include layout="@layout/toolbar" android:id="@+id/apptoolbar"/>
+    <!--<include layout="@layout/toolbar" android:id="@+id/apptoolbar"/>-->
 
     <ListView
         android:id="@+id/coursesListFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="?android:attr/actionBarSize" />
+        android:layout_height="wrap_content" />
 
 </FrameLayout>

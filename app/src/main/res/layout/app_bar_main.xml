@@ -21,10 +21,12 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
+            android:textAlignment="viewEnd"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            android:gravity="end" />
 
     </android.support.design.widget.AppBarLayout>
 
