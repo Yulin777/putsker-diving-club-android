@@ -113,6 +113,11 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        Toolbar apptoolbar = findViewById(R.id.toolbar);
+        apptoolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
+        apptoolbar.setTitle(mUser.getDisplayName());
     }
 
     private void initFab() {
