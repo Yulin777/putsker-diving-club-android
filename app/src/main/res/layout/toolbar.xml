@@ -4,6 +4,22 @@
     android:layout_height="wrap_content"
     android:background="@color/Dark_Turquoise"
     android:elevation="4dp"
-    android:layoutDirection="rtl">
+    android:ellipsize="marquee"
+    android:layoutDirection="rtl"
+    android:marqueeRepeatLimit="marquee_forever"
+    android:scrollHorizontally="true"
+    android:singleLine="true">
 
+    <TextView
+        android:id="@+id/toolbar_title"
+        android:textColor="@color/GhostWhite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layoutDirection="rtl"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true" />
 </android.support.v7.widget.Toolbar>

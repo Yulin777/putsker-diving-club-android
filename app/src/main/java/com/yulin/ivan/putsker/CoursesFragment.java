@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -204,8 +205,11 @@ public class CoursesFragment extends Fragment {
 
 
     private void initToolbar() {
-        apptoolbar = getView().findViewById(R.id.apptoolbar);
-        apptoolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
-        apptoolbar.setTitle(mUser.getDisplayName());
+//        apptoolbar = getView().findViewById(R.id.apptoolbar);
+//        apptoolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
+//        apptoolbar.setTitle(mUser.getDisplayName());
+        TextView _title = getView().findViewById(R.id.toolbar_title);
+        _title.setText(mUser.getDisplayName());
+        _title.setSelected(true);
     }
 }

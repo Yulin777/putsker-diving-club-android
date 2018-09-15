@@ -114,8 +114,11 @@ public class ClassActivity extends ListActivity implements Serializable {
 
     private void initToolbar() {
         apptoolbar = findViewById(R.id.apptoolbar);
-        apptoolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
-        apptoolbar.setTitle(title);
+//        apptoolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
+//        apptoolbar.setTitle(title);
+        TextView _title = findViewById(R.id.toolbar_title);
+        _title.setText(title);
+        _title.setSelected(true);
         apptoolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_right_white));
         apptoolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
