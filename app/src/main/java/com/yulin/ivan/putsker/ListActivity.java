@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -49,11 +48,8 @@ public class ListActivity extends android.app.ListActivity {
     DatabaseReference ref;
     ArrayList<String> list;
     ArrayList<Guide> guideslist;
-    Map<String, Object> m;
-    ArrayList<Object> arr;
     Object selectedGuide;
     Map<String, Object> guidesMap;
-    ArrayAdapter<String> adapter;
     Guide guide;
     Toolbar apptoolbar;
     String title;
@@ -77,8 +73,6 @@ public class ListActivity extends android.app.ListActivity {
         ref = db.getReference().child("Guides");
         list = new ArrayList<>();
         guideslist = new ArrayList<>();
-        adapter = new ArrayAdapter<String>(this, R.layout.guides, R.id.guide_name, list);
-        listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -101,8 +95,6 @@ public class ListActivity extends android.app.ListActivity {
                         //Get map of users in datasnapshot
                         guidesMap = (Map<String, Object>) dataSnapshot.getValue();
                         collectGuidesData(guidesMap);
-                        adapter.notifyDataSetChanged();
-
                         initGuidesList();
                     }
 
@@ -194,8 +186,6 @@ public class ListActivity extends android.app.ListActivity {
 
     private void initToolbar() {
         apptoolbar = findViewById(R.id.apptoolbar);
-//        apptoolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
-//        apptoolbar.setTitle(title);
         TextView _title = findViewById(R.id.toolbar_title);
         _title.setText(title);
         _title.setSelected(true);
@@ -284,22 +274,15 @@ public class ListActivity extends android.app.ListActivity {
         }
 
         private void setGuideImage(final ImageView image, String uid) {
-
-            Task<Uri> profileImageUri;
-            profileImageUri = mStorageRef.child("users").child(uid).getDownloadUrl();
-            profileImageUri.addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    Glide.with(ListActivity.this)
-                            .load(uri)
-                            .into(image);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    //Toast.makeText(StudentActivity.this, "could not load profile image from firebase.", Toast.LENGTH_SHORT).show();
-                }
-            });
+            mStorageRef.child("users").child(uid).getDownloadUrl()
+                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Glide.with(ListActivity.this)
+                                    .load(uri)
+                                    .into(image);
+                        }
+                    });
         }
     }
 }
