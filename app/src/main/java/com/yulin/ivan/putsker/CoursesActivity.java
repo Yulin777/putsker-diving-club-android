@@ -14,7 +14,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class CoursesActivity extends AppCompatActivity implements Serializable{
+public class CoursesActivity extends AppCompatActivity implements Serializable {
 
     ListView listView;
     ArrayList<String> list;
@@ -28,7 +28,7 @@ public class CoursesActivity extends AppCompatActivity implements Serializable{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_courses);
 
-        selectedGuide = (Map<String, Object>)getIntent().getSerializableExtra("data");
+        selectedGuide = (Map<String, Object>) getIntent().getSerializableExtra("data");
         courses = new ArrayList<Course>();
         title = getIntent().getExtras().getString("title");
         initToolbar();
@@ -44,15 +44,17 @@ public class CoursesActivity extends AppCompatActivity implements Serializable{
 
         listView = (ListView) findViewById(R.id.coursesList);
         CustomCoursesAdapter adapter = new CustomCoursesAdapter(this, courses);
-
         listView.setAdapter(adapter);
+
+        (findViewById(R.id.login_progress)).setVisibility(View.INVISIBLE);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(CoursesActivity.this, ClassActivity.class);
                 Course c = (Course) listView.getItemAtPosition(position);
-                String courseName="";
-                switch (c.getCourseName()){
+                String courseName = "";
+                switch (c.getCourseName()) {
                     case "כוכב 1":
                         courseName = "star1";
                         break;
@@ -69,6 +71,7 @@ public class CoursesActivity extends AppCompatActivity implements Serializable{
                 intent.putExtra("isCourse", true);
                 intent.putExtra("courseName", courseName);
                 intent.putExtra("classes", (Serializable) course);
+
                 startActivity(intent);
 
             }

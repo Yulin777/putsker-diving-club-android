@@ -128,7 +128,6 @@ public class CoursesFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        initToolbar();
         courses = new ArrayList<Course>();
         db = FirebaseDatabase.getInstance();
         ref = db.getReference().child("Guides");
@@ -188,6 +187,7 @@ public class CoursesFragment extends Fragment {
 
             }
         });
+        (getView().findViewById(R.id.login_progress)).setVisibility(View.INVISIBLE);
     }
 
     private Map<String, Object> getCurrentGuide() {
@@ -201,12 +201,5 @@ public class CoursesFragment extends Fragment {
             }
         }
         return (Map<String, Object>) guidesMap.values().toArray()[position];
-    }
-
-
-    private void initToolbar() {
-//        TextView _title = getView().findViewById(R.id.toolbar_title);
-//        _title.setText(mUser.getDisplayName());
-//        _title.setSelected(true);
     }
 }

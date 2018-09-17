@@ -96,6 +96,7 @@ public class ListActivity extends android.app.ListActivity {
                         guidesMap = (Map<String, Object>) dataSnapshot.getValue();
                         collectGuidesData(guidesMap);
                         initGuidesList();
+                        (findViewById(R.id.login_progress)).setVisibility(View.INVISIBLE);
                     }
 
                     @Override

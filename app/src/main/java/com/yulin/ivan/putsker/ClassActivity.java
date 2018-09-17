@@ -7,7 +7,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -21,7 +23,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,11 +68,13 @@ public class ClassActivity extends ListActivity implements Serializable {
         } else {
             groups = (ArrayList<Object>) getIntent().getSerializableExtra("classes");
             setListAdapter(new CustomClassAdapter(this, groups));
-
             initializeGroupsList();
         }
+        (findViewById(R.id.login_progress)).setVisibility(View.INVISIBLE);
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String nextTitle;
@@ -79,6 +88,8 @@ public class ClassActivity extends ListActivity implements Serializable {
                     else
                         intent.putExtra("isCourse", false);
                     intent.putExtra("courseName", name);
+//                    if (subcourseAreDates(subcourse))
+//                        subcourse = sortByDate((ArrayList<ArrayList>) subcourse);
                     intent.putExtra("classes", (Serializable) subcourse);
                     intent.putExtra("title", nextTitle);
                     if (nextTitle.length() - nextTitle.replaceAll(">", "").length() == 2) {
@@ -99,6 +110,45 @@ public class ClassActivity extends ListActivity implements Serializable {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private ArrayList sortByDate(ArrayList<ArrayList> subcourse) {
+        Collections.sort(subcourse, new Comparator<ArrayList>() {
+            int flag = 1;
+
+            @Override
+            public int compare(ArrayList o1, ArrayList o2) {
+                System.err.println("\t\t\t\tIN COMPARE " + flag++);
+                Date d1 = null;
+                Date d2 = null;
+                if (o1 == null || o2 == null) {
+                    System.err.println("\t\t\t\tRETURNED 0: " + (o1 == null ? "o1" : "o2"));
+                    return 0;
+                }
+                try {
+                    d1 = (new SimpleDateFormat("dd.MM.yy")).parse(((String) o1.get(0)).trim());
+                    d2 = (new SimpleDateFormat("dd.MM.yy")).parse(((String) o2.get(0)).trim());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                return d1.after(d2) ? 1 : -1;
+            }
+        });
+        return subcourse;
+    }
+
+    private boolean subcourseAreDates(Object subcourse) {
+        try {
+            String firstTitle = (String) ((ArrayList) ((ArrayList) subcourse).get(1)).get(0);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
+            dateFormat.setLenient(false);
+
+            dateFormat.parse(firstTitle.trim());
+        } catch (Exception pe) {
+            return false;
+        }
+        return true;
+    }
+
     private void initializeClassesList() {
         for (Map.Entry<String, Object> entry : classes.entrySet()) {
             list.add(entry.getKey());
@@ -114,8 +164,6 @@ public class ClassActivity extends ListActivity implements Serializable {
 
     private void initToolbar() {
         apptoolbar = findViewById(R.id.apptoolbar);
-//        apptoolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
-//        apptoolbar.setTitle(title);
         TextView _title = findViewById(R.id.toolbar_title);
         _title.setText(title);
         _title.setSelected(true);

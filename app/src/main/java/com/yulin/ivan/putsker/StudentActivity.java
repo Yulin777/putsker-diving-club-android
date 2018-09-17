@@ -69,7 +69,7 @@ public class StudentActivity extends ListActivity {
 
         initToolbar();
         initStudentList();
-
+        (findViewById(R.id.login_progress)).setVisibility(View.INVISIBLE);
     }
 
     private void initStudentList() {
@@ -80,7 +80,6 @@ public class StudentActivity extends ListActivity {
             Student item = new Student((String) m.get("name"), (String) m.get("phone"), (Boolean) m.get("hasGear"));
             students.add(item);
         }
-
         setListAdapter(new CustomStudentAdapter(this, students));
     }
 
