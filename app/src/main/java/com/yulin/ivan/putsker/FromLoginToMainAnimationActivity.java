@@ -46,7 +46,7 @@ public class FromLoginToMainAnimationActivity extends Activity {
         Thread timer = new Thread() {
             public void run() {
                 try {
-//                    sleep(3000);
+                    sleep(2000);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -54,7 +54,7 @@ public class FromLoginToMainAnimationActivity extends Activity {
                             title.setText("Got it!\nComing up to surface");
                         }
                     });
-//                    sleep(1000);
+                    sleep(1000);
                     synchronized (notifier) {
                         while (isSenior == null) {
                             notifier.wait();
